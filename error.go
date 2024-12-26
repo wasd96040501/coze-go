@@ -21,7 +21,7 @@ func NewError(code int, msg, logID string) *Error {
 
 // Error implements the error interface
 func (e *Error) Error() string {
-	return fmt.Sprintf("code= %d, message= %s, logID= %s",
+	return fmt.Sprintf("code=%d, message=%s, logid=%s",
 		e.Code,
 		e.Message,
 		e.LogID)

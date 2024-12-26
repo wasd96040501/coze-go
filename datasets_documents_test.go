@@ -19,7 +19,7 @@ func TestDatasetsDocuments(t *testing.T) {
 				assert.Equal(t, "/open_api/knowledge/document/create", req.URL.Path)
 
 				// Verify headers
-				assert.Equal(t, "true", req.Header.Get("Agw-Js-Conv"))
+				assert.Equal(t, "str", req.Header.Get("Agw-Js-Conv"))
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &createDatasetsDocumentsResp{
@@ -80,7 +80,7 @@ func TestDatasetsDocuments(t *testing.T) {
 				assert.Equal(t, "/open_api/knowledge/document/update", req.URL.Path)
 
 				// Verify headers
-				assert.Equal(t, "true", req.Header.Get("Agw-Js-Conv"))
+				assert.Equal(t, "str", req.Header.Get("Agw-Js-Conv"))
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &updateDatasetsDocumentsResp{})
@@ -109,7 +109,7 @@ func TestDatasetsDocuments(t *testing.T) {
 				assert.Equal(t, "/open_api/knowledge/document/delete", req.URL.Path)
 
 				// Verify headers
-				assert.Equal(t, "true", req.Header.Get("Agw-Js-Conv"))
+				assert.Equal(t, "str", req.Header.Get("Agw-Js-Conv"))
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &deleteDatasetsDocumentsResp{})
@@ -136,7 +136,7 @@ func TestDatasetsDocuments(t *testing.T) {
 				assert.Equal(t, "/open_api/knowledge/document/list", req.URL.Path)
 
 				// Verify headers
-				assert.Equal(t, "true", req.Header.Get("Agw-Js-Conv"))
+				assert.Equal(t, "str", req.Header.Get("Agw-Js-Conv"))
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &listDatasetsDocumentsResp{

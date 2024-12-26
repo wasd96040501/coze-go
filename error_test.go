@@ -20,7 +20,7 @@ func TestNewCozeError(t *testing.T) {
 func TestCozeError_Error(t *testing.T) {
 	// 测试 Error() 方法
 	err := NewError(1001, "test error", "test-log-id")
-	expectedMsg := "Code: 1001, Message: test error, LogID: test-log-id"
+	expectedMsg := "code=1001, message=test error, logid=test-log-id"
 	assert.Equal(t, expectedMsg, err.Error())
 }
 

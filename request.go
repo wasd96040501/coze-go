@@ -187,6 +187,9 @@ func checkHttpResp(ctx context.Context, resp *http.Response) error {
 	// 鉴权的情况，需要解析
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("coze read response body failed: %w, log_id: %s", err, logID)
+		}
 		errorInfo := authErrorFormat{}
 		err = json.Unmarshal(bodyBytes, &errorInfo)
 		if err != nil {

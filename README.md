@@ -23,33 +23,33 @@ go get github.com/coze-dev/coze-go
 
 ### Examples
 
-| Example                       | File                                                    |
-|-------------------------------|---------------------------------------------------------|
-| pat auth                      | [main.go](examples/auth/token/main.go)                  |
-| oauth by web code             | [main.go](examples/auth/web_oauth/main.go)              |
-| oauth by jwt flow             | [main.go](examples/auth/jwt_oauth/main.go)              |
-| oauth by pkce flow            | [main.go](examples/auth/pkce_oauth/main.go)             |
-| oauth by device flow          | [main.go](examples/auth/device_oauth/main.go)           |
-| handle auth exception         | [main.go](examples/auth/error/main.go)                  |
-| bot create, publish and chat  | [main.go](examples/bots/publish/main.go)                |
-| get bot and bot list          | [main.go](examples/bots/retrieve/main.go)               |
-| non-stream chat               | [main.go](examples/chats/chat/main.go)                  |
-| stream chat                   | [main.go](examples/chats/chat_with_image/main.go)       |
-| chat with local plugin        | [main.go](examples/chats/submit_tool_output/main.go)    |
-| chat with image               | [main.go](examples/chats/chat_with_image/main.go)       |
-| non-stream workflow chat      | [main.go](examples/workflows/runs/create/main.go)       |
-| stream workflow chat          | [main.go](examples/workflows/runs/stream/main.go)       |
-| async workflow run            | [main.go](examples/workflows/runs/async_run/main.go)    |
-| conversation                  | [main.go](examples/conversations/crud/main.go)          |
-| list conversation             | [main.go](examples/conversations/list/main.go)          |
-| workspace                     | [main.go](examples/workspaces/list/main.go)             |
-| create update delete message  | [main.go](examples/conversations/messages/crud/main.go) |
-| list message                  | [main.go](examples/conversations/messages/list/main.go) |
-| create update delete document | [main.go](examples/datasets/documents/crud/main.go)     |
-| list documents                | [main.go](examples/datasets/documents/list/main.go)     |
-| initial client                | [main.go](examples/client/init/main.go)                 |
-| how to handle error           | [main.go](examples/client/error/main.go)                |
-| get response log id           | [main.go](examples/client/log/main.go)                  |
+| Example                       | File                                                                                    |
+|-------------------------------|-----------------------------------------------------------------------------------------|
+| pat auth                      | [pat_example.go](examples/auth/token/main.go)                                           |
+| oauth by web code             | [web_oauth_example.go](examples/auth/web_oauth/main.go)                                 |
+| oauth by jwt flow             | [jwt_oauth_example.go](examples/auth/jwt_oauth/main.go)                                 |
+| oauth by pkce flow            | [pkce_oauth_example.go](examples/auth/pkce_oauth/main.go)                               |
+| oauth by device flow          | [device_oauth_example.go](examples/auth/device_oauth/main.go)                           |
+| handle auth exception         | [handle_auth_exception_example.go](examples/auth/error/main.go)                         |
+| bot create, publish and chat  | [publish_bot_example.go](examples/bots/publish/main.go)                                 |
+| get bot and bot list          | [retrieve_bot_example.go](examples/bots/retrieve/main.go)                               |
+| non-stream chat               | [non_stream_chat_example.go](examples/chats/chat/main.go)                               |
+| stream chat                   | [stream_chat_example.go](examples/chats/chat_with_image/main.go)                        |
+| chat with local plugin        | [submit_tool_output_example.go](examples/chats/submit_tool_output/main.go)              |
+| chat with image               | [chat_with_image_example.go](examples/chats/chat_with_image/main.go)                    |
+| non-stream workflow chat      | [non_stream_workflow_run_example.go](examples/workflows/runs/create/main.go)            |
+| stream workflow chat          | [stream_workflow_run_example.go](examples/workflows/runs/stream/main.go)                |
+| async workflow run            | [async_workflow_run_example.go](examples/workflows/runs/async_run/main.go)              |
+| conversation                  | [conversation_example.go](examples/conversations/crud/main.go)                          |
+| list conversation             | [list_conversation_example.go](examples/conversations/list/main.go)                     |
+| workspace                     | [list_workspace_example.go](examples/workspaces/list/main.go)                           |
+| create update delete message  | [create_update_delete_message_example.go](examples/conversations/messages/crud/main.go) |
+| list message                  | [list_message_example.go](examples/conversations/messages/list/main.go)                 |
+| create update delete document | [create_update_delete_document_example.go](examples/datasets/documents/crud/main.go)    |
+| list documents                | [list_documents_example.go](examples/datasets/documents/list/main.go)                   |
+| initial client                | [init_client_example.go](examples/client/init/main.go)                                  |
+| how to handle error           | [handle_error_example.go](examples/client/error/main.go)                                |
+| get response log id           | [log_example.go](examples/client/log/main.go)                                           |
 
 ### Initialize the Coze Client 
 
