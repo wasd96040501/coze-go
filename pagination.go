@@ -1,20 +1,29 @@
 package coze
 
-type Pagination[T any] interface {
+type BasePaged[T any] interface {
 	Err() error
 	Items() []*T
 	Current() *T
-	Total() int
+	Next() bool
 	HasMore() bool
 }
 
-type PageRequest struct {
+type NumberPaged[T any] interface {
+	BasePaged[T]
+	Total() int
+}
+type LastIDPaged[T any] interface {
+	BasePaged[T]
+	GetLastID() string
+}
+
+type pageRequest struct {
 	PageToken string `json:"page_token,omitempty"`
 	PageNum   int    `json:"page_num,omitempty"`
 	PageSize  int    `json:"page_size,omitempty"`
 }
 
-type PageResponse[T any] struct {
+type pageResponse[T any] struct {
 	HasMore bool   `json:"has_more"`
 	Total   int    `json:"total"`
 	Data    []*T   `json:"data"`
@@ -26,7 +35,7 @@ type PageResponse[T any] struct {
 type basePager[T any] struct {
 	pageFetcher    PageFetcher[T]
 	pageSize       int
-	currentPage    *PageResponse[T]
+	currentPage    *pageResponse[T]
 	currentIndex   int
 	currentPageNum int
 	cur            *T
@@ -54,18 +63,18 @@ func (p *basePager[T]) HasMore() bool {
 }
 
 // PageFetcher interface
-type PageFetcher[T any] func(request *PageRequest) (*PageResponse[T], error)
+type PageFetcher[T any] func(request *pageRequest) (*pageResponse[T], error)
 
 // NumberPaged implementation
-type NumberPaged[T any] struct {
+type implNumberPaged[T any] struct {
 	basePager[T]
 }
 
-func NewNumberPaged[T any](fetcher PageFetcher[T], pageSize, pageNum int) (*NumberPaged[T], error) {
+func NewNumberPaged[T any](fetcher PageFetcher[T], pageSize, pageNum int) (NumberPaged[T], error) {
 	if pageNum <= 0 {
 		pageNum = 1
 	}
-	paginator := &NumberPaged[T]{basePager: basePager[T]{pageFetcher: fetcher, pageSize: pageSize, currentPageNum: pageNum}}
+	paginator := &implNumberPaged[T]{basePager: basePager[T]{pageFetcher: fetcher, pageSize: pageSize, currentPageNum: pageNum}}
 	err := paginator.fetchNextPage()
 	if err != nil {
 		return nil, err
@@ -73,8 +82,8 @@ func NewNumberPaged[T any](fetcher PageFetcher[T], pageSize, pageNum int) (*Numb
 	return paginator, nil
 }
 
-func (p *NumberPaged[T]) fetchNextPage() error {
-	request := &PageRequest{PageNum: p.currentPageNum, PageSize: p.pageSize}
+func (p *implNumberPaged[T]) fetchNextPage() error {
+	request := &pageRequest{PageNum: p.currentPageNum, PageSize: p.pageSize}
 	var err error
 	p.currentPage, err = p.pageFetcher(request)
 	if err != nil {
@@ -85,7 +94,7 @@ func (p *NumberPaged[T]) fetchNextPage() error {
 	return nil
 }
 
-func (p *NumberPaged[T]) Next() bool {
+func (p *implNumberPaged[T]) Next() bool {
 	if p.currentIndex < len(ptrValue(p.currentPage).Data) {
 		p.cur = p.currentPage.Data[p.currentIndex]
 		p.currentIndex++
@@ -108,13 +117,13 @@ func (p *NumberPaged[T]) Next() bool {
 }
 
 // TokenPaged implementation
-type TokenPaged[T any] struct {
+type implLastIDPaged[T any] struct {
 	basePager[T]
 	pageToken *string
 }
 
-func NewTokenPaged[T any](fetcher PageFetcher[T], pageSize int, nextID *string) (*TokenPaged[T], error) {
-	paginator := &TokenPaged[T]{basePager: basePager[T]{pageFetcher: fetcher, pageSize: pageSize}, pageToken: nextID}
+func NewLastIDPaged[T any](fetcher PageFetcher[T], pageSize int, nextID *string) (LastIDPaged[T], error) {
+	paginator := &implLastIDPaged[T]{basePager: basePager[T]{pageFetcher: fetcher, pageSize: pageSize}, pageToken: nextID}
 	err := paginator.fetchNextPage()
 	if err != nil {
 		return nil, err
@@ -122,8 +131,8 @@ func NewTokenPaged[T any](fetcher PageFetcher[T], pageSize int, nextID *string) 
 	return paginator, nil
 }
 
-func (p *TokenPaged[T]) fetchNextPage() error {
-	request := &PageRequest{PageToken: ptrValue(p.pageToken), PageSize: p.pageSize}
+func (p *implLastIDPaged[T]) fetchNextPage() error {
+	request := &pageRequest{PageToken: ptrValue(p.pageToken), PageSize: p.pageSize}
 	var err error
 	p.currentPage, err = p.pageFetcher(request)
 	if err != nil {
@@ -134,7 +143,7 @@ func (p *TokenPaged[T]) fetchNextPage() error {
 	return nil
 }
 
-func (p *TokenPaged[T]) Next() bool {
+func (p *implLastIDPaged[T]) Next() bool {
 	if p.currentIndex < len(ptrValue(p.currentPage).Data) {
 		p.cur = p.currentPage.Data[p.currentIndex]
 		p.currentIndex++
@@ -154,4 +163,8 @@ func (p *TokenPaged[T]) Next() bool {
 		return true
 	}
 	return false
+}
+
+func (p *implLastIDPaged[T]) GetLastID() string {
+	return p.currentPage.LastID
 }

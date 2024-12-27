@@ -44,7 +44,7 @@ func (r *datasetsDocuments) Delete(ctx context.Context, req *DeleteDatasetsDocum
 	return result, nil
 }
 
-func (r *datasetsDocuments) List(ctx context.Context, req *ListDatasetsDocumentsReq) (*NumberPaged[Document], error) {
+func (r *datasetsDocuments) List(ctx context.Context, req *ListDatasetsDocumentsReq) (NumberPaged[Document], error) {
 	if req.Page == 0 {
 		req.Page = 1
 	}
@@ -52,7 +52,7 @@ func (r *datasetsDocuments) List(ctx context.Context, req *ListDatasetsDocuments
 		req.Size = 20
 	}
 	return NewNumberPaged[Document](
-		func(request *PageRequest) (*PageResponse[Document], error) {
+		func(request *pageRequest) (*pageResponse[Document], error) {
 			uri := "/open_api/knowledge/document/list"
 			resp := &listDatasetsDocumentsResp{}
 			doReq := &ListDatasetsDocumentsReq{
@@ -64,7 +64,7 @@ func (r *datasetsDocuments) List(ctx context.Context, req *ListDatasetsDocuments
 			if err != nil {
 				return nil, err
 			}
-			return &PageResponse[Document]{
+			return &pageResponse[Document]{
 				Total:   int(resp.Total),
 				HasMore: request.PageSize <= len(resp.DocumentInfos),
 				Data:    resp.DocumentInfos,

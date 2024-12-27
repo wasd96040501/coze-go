@@ -19,12 +19,12 @@ func (r *conversationsMessages) Create(ctx context.Context, req *CreateMessageRe
 	return resp.Message, nil
 }
 
-func (r *conversationsMessages) List(ctx context.Context, req *ListConversationsMessagesReq) (*TokenPaged[Message], error) {
+func (r *conversationsMessages) List(ctx context.Context, req *ListConversationsMessagesReq) (LastIDPaged[Message], error) {
 	if req.Limit == 0 {
 		req.Limit = 20
 	}
-	return NewTokenPaged[Message](
-		func(request *PageRequest) (*PageResponse[Message], error) {
+	return NewLastIDPaged[Message](
+		func(request *pageRequest) (*pageResponse[Message], error) {
 			uri := "/v1/conversation/message/list"
 			resp := &listConversationsMessagesResp{}
 			doReq := &ListConversationsMessagesReq{
@@ -42,7 +42,7 @@ func (r *conversationsMessages) List(ctx context.Context, req *ListConversations
 			if err != nil {
 				return nil, err
 			}
-			return &PageResponse[Message]{
+			return &pageResponse[Message]{
 				HasMore: resp.HasMore,
 				Data:    resp.Messages,
 				LastID:  resp.FirstID,

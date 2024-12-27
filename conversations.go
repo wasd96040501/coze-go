@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func (r *conversations) List(ctx context.Context, req *ListConversationsReq) (*NumberPaged[Conversation], error) {
+func (r *conversations) List(ctx context.Context, req *ListConversationsReq) (NumberPaged[Conversation], error) {
 	if req.PageSize == 0 {
 		req.PageSize = 20
 	}
@@ -15,7 +15,7 @@ func (r *conversations) List(ctx context.Context, req *ListConversationsReq) (*N
 		req.PageNum = 1
 	}
 	return NewNumberPaged[Conversation](
-		func(request *PageRequest) (*PageResponse[Conversation], error) {
+		func(request *pageRequest) (*pageResponse[Conversation], error) {
 			uri := "/v1/conversations"
 			resp := &listConversationsResp{}
 			err := r.client.Request(ctx, http.MethodGet, uri, nil, resp,
@@ -25,7 +25,7 @@ func (r *conversations) List(ctx context.Context, req *ListConversationsReq) (*N
 			if err != nil {
 				return nil, err
 			}
-			return &PageResponse[Conversation]{
+			return &pageResponse[Conversation]{
 				HasMore: resp.Data.HasMore,
 				Data:    resp.Data.Conversations,
 				LogID:   resp.HTTPResponse.LogID(),

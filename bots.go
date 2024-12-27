@@ -55,7 +55,7 @@ func (r *bots) Retrieve(ctx context.Context, req *RetrieveBotsReq) (*RetrieveBot
 	return resp.Bot, nil
 }
 
-func (r *bots) List(ctx context.Context, req *ListBotsReq) (*NumberPaged[SimpleBot], error) {
+func (r *bots) List(ctx context.Context, req *ListBotsReq) (NumberPaged[SimpleBot], error) {
 	if req.PageSize == 0 {
 		req.PageSize = 20
 	}
@@ -63,7 +63,7 @@ func (r *bots) List(ctx context.Context, req *ListBotsReq) (*NumberPaged[SimpleB
 		req.PageNum = 1
 	}
 	return NewNumberPaged[SimpleBot](
-		func(request *PageRequest) (*PageResponse[SimpleBot], error) {
+		func(request *pageRequest) (*pageResponse[SimpleBot], error) {
 			uri := "/v1/space/published_bots_list"
 			resp := &listBotsResp{}
 			err := r.core.Request(ctx, http.MethodGet, uri, nil, resp,
@@ -73,7 +73,7 @@ func (r *bots) List(ctx context.Context, req *ListBotsReq) (*NumberPaged[SimpleB
 			if err != nil {
 				return nil, err
 			}
-			return &PageResponse[SimpleBot]{
+			return &pageResponse[SimpleBot]{
 				Total:   resp.Data.Total,
 				HasMore: len(resp.Data.Bots) >= request.PageSize,
 				Data:    resp.Data.Bots,

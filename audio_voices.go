@@ -46,7 +46,7 @@ func (r *audioVoices) Clone(ctx context.Context, req *CloneAudioVoicesReq) (*Clo
 	return resp.Data, nil
 }
 
-func (r *audioVoices) List(ctx context.Context, req *ListAudioVoicesReq) (*NumberPaged[Voice], error) {
+func (r *audioVoices) List(ctx context.Context, req *ListAudioVoicesReq) (NumberPaged[Voice], error) {
 	if req.PageSize == 0 {
 		req.PageSize = 20
 	}
@@ -54,7 +54,7 @@ func (r *audioVoices) List(ctx context.Context, req *ListAudioVoicesReq) (*Numbe
 		req.PageNum = 1
 	}
 	return NewNumberPaged[Voice](
-		func(request *PageRequest) (*PageResponse[Voice], error) {
+		func(request *pageRequest) (*pageResponse[Voice], error) {
 			uri := "/v1/audio/voices"
 			resp := &ListAudioVoicesResp{}
 			err := r.core.Request(ctx, http.MethodGet, uri, nil, resp,
@@ -64,7 +64,7 @@ func (r *audioVoices) List(ctx context.Context, req *ListAudioVoicesReq) (*Numbe
 			if err != nil {
 				return nil, err
 			}
-			return &PageResponse[Voice]{
+			return &pageResponse[Voice]{
 				HasMore: len(resp.Data.VoiceList) >= request.PageSize,
 				Data:    resp.Data.VoiceList,
 				LogID:   resp.HTTPResponse.LogID(),

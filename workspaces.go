@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (r *workspace) List(ctx context.Context, req *ListWorkspaceReq) (*NumberPaged[Workspace], error) {
+func (r *workspace) List(ctx context.Context, req *ListWorkspaceReq) (NumberPaged[Workspace], error) {
 	if req.PageSize == 0 {
 		req.PageSize = 20
 	}
@@ -14,7 +14,7 @@ func (r *workspace) List(ctx context.Context, req *ListWorkspaceReq) (*NumberPag
 		req.PageNum = 1
 	}
 	return NewNumberPaged[Workspace](
-		func(request *PageRequest) (*PageResponse[Workspace], error) {
+		func(request *pageRequest) (*pageResponse[Workspace], error) {
 			uri := "/v1/workspaces"
 			resp := &listWorkspaceResp{}
 			err := r.core.Request(ctx, http.MethodGet, uri, nil, resp,
@@ -23,7 +23,7 @@ func (r *workspace) List(ctx context.Context, req *ListWorkspaceReq) (*NumberPag
 			if err != nil {
 				return nil, err
 			}
-			return &PageResponse[Workspace]{
+			return &pageResponse[Workspace]{
 				Total:   resp.Data.TotalCount,
 				HasMore: len(resp.Data.Workspaces) >= request.PageSize,
 				Data:    resp.Data.Workspaces,
