@@ -30,6 +30,10 @@ jobs:
         with:
           version: latest
           args: --out-format=colored-line-number
+
+      - name: Run go build
+        run: |
+          go build ./...
           
       - name: Run tests with coverage
         run: |

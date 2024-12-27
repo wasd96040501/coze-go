@@ -55,9 +55,9 @@ func main() {
 	fmt.Println(codeResp.LogID())
 
 	// The space permissions for which the Access Token is granted can be specified. As following codes:
-	codeResp, err = oauth.GetDeviceCode(ctx, &coze.GetDeviceOAuthCodeReq{
-		WorkspaceID: &workspaceID,
-	})
+	// codeResp, err = oauth.GetDeviceCode(ctx, &coze.GetDeviceOAuthCodeReq{
+	// 	WorkspaceID: &workspaceID,
+	// })
 
 	// The returned device_code contains an authorization link. Developers need to guide users
 	// to open up this link.
