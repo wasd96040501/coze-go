@@ -46,7 +46,7 @@ func main() {
 	//
 	// First, make a call to obtain 'getDeviceCode'
 
-	codeResp, err := oauth.GetDeviceCode(ctx)
+	codeResp, err := oauth.GetDeviceCode(ctx, nil)
 	if err != nil {
 		fmt.Printf("Failed to get device code: %v\n", err)
 		return
@@ -55,9 +55,9 @@ func main() {
 	fmt.Println(codeResp.LogID())
 
 	// The space permissions for which the Access Token is granted can be specified. As following codes:
-	// GetDeviceAuthResp wCodeResp = oauth.getDeviceCode("workspaceID");
-	// Example with workspaces ID:
-	// codeResp, err = oauth.GetDeviceCodeWithWorkspace("workspaceID")
+	codeResp, err = oauth.GetDeviceCode(ctx, &coze.GetDeviceOAuthCodeReq{
+		WorkspaceID: &workspaceID,
+	})
 
 	// The returned device_code contains an authorization link. Developers need to guide users
 	// to open up this link.
@@ -70,7 +70,10 @@ func main() {
 	// codes. The developers only need to invoke getAccessToken.
 
 	// if the developers set poll as true, the sdk will automatically handle pending and slow down exception
-	resp, err := oauth.GetAccessToken(ctx, codeResp.DeviceCode, true)
+	resp, err := oauth.GetAccessToken(ctx, &coze.GetDeviceOAuthAccessTokenReq{
+		DeviceCode: codeResp.DeviceCode,
+		Poll:       true,
+	})
 	if err != nil {
 		authErr, ok := coze.AsCozeAuthError(err)
 		if !ok {

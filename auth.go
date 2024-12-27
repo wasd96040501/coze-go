@@ -33,8 +33,8 @@ type GetDeviceAuthResp struct {
 	Interval        int    `json:"interval"`
 }
 
-// GetAccessTokenReq represents the access token request
-type GetAccessTokenReq struct {
+// getAccessTokenReq represents the access token request
+type getAccessTokenReq struct {
 	ClientID        string `json:"client_id"`
 	Code            string `json:"code,omitempty"`
 	GrantType       string `json:"grant_type"`
@@ -47,8 +47,8 @@ type GetAccessTokenReq struct {
 	LogID           string `json:"log_id,omitempty"`
 }
 
-// GetPKCEAuthURLResp represents the PKCE authorization URL response
-type GetPKCEAuthURLResp struct {
+// GetPKCEOAuthURLResp represents the PKCE authorization URL response
+type GetPKCEOAuthURLResp struct {
 	CodeVerifier     string `json:"code_verifier"`
 	AuthorizationURL string `json:"authorization_url"`
 }
@@ -262,17 +262,17 @@ type getAccessTokenParams struct {
 	Secret       string
 	RedirectURI  string
 	RefreshToken string
-	Request      *GetAccessTokenReq
+	Request      *getAccessTokenReq
 }
 
 func (c *OAuthClient) getAccessToken(ctx context.Context, params getAccessTokenParams) (*OAuthToken, error) {
 	// If Request is provided, use it directly
 	result := &OAuthToken{}
-	var req *GetAccessTokenReq
+	var req *getAccessTokenReq
 	if params.Request != nil {
 		req = params.Request
 	} else {
-		req = &GetAccessTokenReq{
+		req = &getAccessTokenReq{
 			ClientID:     c.clientID,
 			GrantType:    params.Type.String(),
 			Code:         params.Code,
@@ -324,15 +324,15 @@ func NewPKCEOAuthClient(clientID string, opts ...OAuthClientOption) (*PKCEOAuthC
 	}, err
 }
 
-type GetPKCEAuthURLReq struct {
+type GetPKCEOAuthURLReq struct {
 	RedirectURI string
 	State       string
 	Method      *CodeChallengeMethod
 	WorkspaceID *string
 }
 
-// GenOAuthURL generates OAuth URL
-func (c *PKCEOAuthClient) GenOAuthURL(req *GetPKCEAuthURLReq) (*GetPKCEAuthURLResp, error) {
+// GetOAuthURL generates OAuth URL
+func (c *PKCEOAuthClient) GetOAuthURL(ctx context.Context, req *GetPKCEOAuthURLReq) (*GetPKCEOAuthURLResp, error) {
 	if req == nil {
 		return nil, errors.New("request is required")
 	}
@@ -362,7 +362,7 @@ func (c *PKCEOAuthClient) GenOAuthURL(req *GetPKCEAuthURLReq) (*GetPKCEAuthURLRe
 			withCodeChallengeMethod(string(method)))
 	}
 
-	return &GetPKCEAuthURLResp{
+	return &GetPKCEOAuthURLResp{
 		CodeVerifier:     codeVerifier,
 		AuthorizationURL: authorizationURL,
 	}, nil
@@ -376,16 +376,19 @@ func (c *PKCEOAuthClient) getCode(codeVerifier string, method CodeChallengeMetho
 	return genS256CodeChallenge(codeVerifier)
 }
 
-func (c *PKCEOAuthClient) GetAccessToken(ctx context.Context, code, redirectURI, codeVerifier string) (*OAuthToken, error) {
-	req := &GetAccessTokenReq{
-		ClientID:     c.clientID,
-		GrantType:    string(GrantTypeAuthorizationCode),
-		Code:         code,
-		RedirectURI:  redirectURI,
-		CodeVerifier: codeVerifier,
-	}
+type GetPKCEAccessTokenReq struct {
+	Code, RedirectURI, CodeVerifier string
+}
+
+func (c *PKCEOAuthClient) GetAccessToken(ctx context.Context, req *GetPKCEAccessTokenReq) (*OAuthToken, error) {
 	return c.getAccessToken(ctx, getAccessTokenParams{
-		Request: req,
+		Request: &getAccessTokenReq{
+			ClientID:     c.clientID,
+			GrantType:    string(GrantTypeAuthorizationCode),
+			Code:         req.Code,
+			RedirectURI:  req.RedirectURI,
+			CodeVerifier: req.CodeVerifier,
+		},
 	})
 }
 
@@ -436,13 +439,8 @@ func NewDeviceOAuthClient(clientID string, opts ...OAuthClientOption) (*DeviceOA
 }
 
 // GetDeviceCode gets the device code
-func (c *DeviceOAuthClient) GetDeviceCode(ctx context.Context) (*GetDeviceAuthResp, error) {
-	return c.doGetDeviceCode(ctx, nil)
-}
-
-// GetDeviceCodeWithWorkspace gets the device code with workspace
-func (c *DeviceOAuthClient) GetDeviceCodeWithWorkspace(ctx context.Context, workspaceID string) (*GetDeviceAuthResp, error) {
-	return c.doGetDeviceCode(ctx, &workspaceID)
+func (c *DeviceOAuthClient) GetDeviceCode(ctx context.Context, workspaceID *string) (*GetDeviceAuthResp, error) {
+	return c.doGetDeviceCode(ctx, workspaceID)
 }
 
 func (c *DeviceOAuthClient) doGetDeviceCode(ctx context.Context, workspaceID *string) (*GetDeviceAuthResp, error) {
@@ -464,14 +462,19 @@ func (c *DeviceOAuthClient) doGetDeviceCode(ctx context.Context, workspaceID *st
 	return result, nil
 }
 
-func (c *DeviceOAuthClient) GetAccessToken(ctx context.Context, deviceCode string, poll bool) (*OAuthToken, error) {
-	req := &GetAccessTokenReq{
+type GetDeviceOAuthAccessTokenReq struct {
+	DeviceCode string
+	Poll       bool
+}
+
+func (c *DeviceOAuthClient) GetAccessToken(ctx context.Context, dReq *GetDeviceOAuthAccessTokenReq) (*OAuthToken, error) {
+	req := &getAccessTokenReq{
 		ClientID:   c.clientID,
 		GrantType:  string(GrantTypeDeviceCode),
-		DeviceCode: deviceCode,
+		DeviceCode: dReq.DeviceCode,
 	}
 
-	if !poll {
+	if !dReq.Poll {
 		return c.doGetAccessToken(ctx, req)
 	}
 
@@ -503,7 +506,7 @@ func (c *DeviceOAuthClient) GetAccessToken(ctx context.Context, deviceCode strin
 	}
 }
 
-func (c *DeviceOAuthClient) doGetAccessToken(ctx context.Context, req *GetAccessTokenReq) (*OAuthToken, error) {
+func (c *DeviceOAuthClient) doGetAccessToken(ctx context.Context, req *getAccessTokenReq) (*OAuthToken, error) {
 	resp := &getOAuthTokenResp{}
 	if err := c.core.Request(ctx, http.MethodPost, getTokenPath, req, resp); err != nil {
 		return nil, err
@@ -560,17 +563,17 @@ func NewJWTOAuthClient(param NewJWTOAuthClientParam, opts ...OAuthClientOption) 
 	return jwtClient, nil
 }
 
-// JWTGetAccessTokenOptions represents options for getting JWT OAuth token
-type JWTGetAccessTokenOptions struct {
+// GetJWTAccessTokenReq represents options for getting JWT OAuth token
+type GetJWTAccessTokenReq struct {
 	TTL         int     `json:"ttl,omitempty"`          // Token validity period (in seconds)
 	Scope       *Scope  `json:"scope,omitempty"`        // Permission scope
 	SessionName *string `json:"session_name,omitempty"` // Session name
 }
 
 // GetAccessToken gets the access token, using options pattern
-func (c *JWTOAuthClient) GetAccessToken(ctx context.Context, opts *JWTGetAccessTokenOptions) (*OAuthToken, error) {
+func (c *JWTOAuthClient) GetAccessToken(ctx context.Context, opts *GetJWTAccessTokenReq) (*OAuthToken, error) {
 	if opts == nil {
-		opts = &JWTGetAccessTokenOptions{}
+		opts = &GetJWTAccessTokenReq{}
 	}
 
 	ttl := c.ttl
@@ -586,7 +589,7 @@ func (c *JWTOAuthClient) GetAccessToken(ctx context.Context, opts *JWTGetAccessT
 	req := getAccessTokenParams{
 		Type:   GrantTypeJWTCode,
 		Secret: jwtCode,
-		Request: &GetAccessTokenReq{
+		Request: &getAccessTokenReq{
 			ClientID:  c.clientID,
 			GrantType: string(GrantTypeJWTCode),
 			Scope:     opts.Scope,
@@ -649,28 +652,34 @@ func NewWebOAuthClient(clientID, clientSecret string, opts ...OAuthClientOption)
 	}, err
 }
 
+type GetWebOAuthAccessTokenReq struct {
+	Code, RedirectURI string
+}
+
 // GetAccessToken gets the access token
-func (c *WebOAuthClient) GetAccessToken(ctx context.Context, code, redirectURI string) (*OAuthToken, error) {
-	req := &GetAccessTokenReq{
-		ClientID:    c.clientID,
-		GrantType:   string(GrantTypeAuthorizationCode),
-		Code:        code,
-		RedirectURI: redirectURI,
-	}
+func (c *WebOAuthClient) GetAccessToken(ctx context.Context, req *GetWebOAuthAccessTokenReq) (*OAuthToken, error) {
 	return c.getAccessToken(ctx, getAccessTokenParams{
-		Secret:  c.clientSecret,
-		Request: req,
+		Secret: c.clientSecret,
+		Request: &getAccessTokenReq{
+			ClientID:    c.clientID,
+			GrantType:   string(GrantTypeAuthorizationCode),
+			Code:        req.Code,
+			RedirectURI: req.RedirectURI,
+		},
 	})
 }
 
-// GetOAuthURL Get OAuth URL
-func (c *WebOAuthClient) GetOAuthURL(redirectURI, state string) string {
-	return c.getOAuthURL(redirectURI, state)
+type GetWebOAuthURLReq struct {
+	RedirectURI, State string
+	WorkspaceID        *string
 }
 
-// GetAccessToken gets the access token
-func (c *WebOAuthClient) GetOAuthURLWithWorkspace(redirectURI, state, workspaceID string) string {
-	return c.getWorkspaceOAuthURL(redirectURI, state, workspaceID)
+// GetOAuthURL Get OAuth URL
+func (c *WebOAuthClient) GetOAuthURL(ctx context.Context, req *GetWebOAuthURLReq) string {
+	if req.WorkspaceID != nil {
+		return c.getWorkspaceOAuthURL(req.RedirectURI, req.State, *req.WorkspaceID)
+	}
+	return c.getOAuthURL(req.RedirectURI, req.State)
 }
 
 // RefreshToken refreshes the access token

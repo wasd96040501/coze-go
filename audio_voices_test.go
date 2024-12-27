@@ -39,6 +39,8 @@ func TestAudioVoices(t *testing.T) {
 		voiceID := "base_voice"
 		previewText := "Hello"
 		text := "Sample text"
+		description := "Test voice"
+		spaceID := "test_space"
 
 		resp, err := voices.Clone(context.Background(), &CloneAudioVoicesReq{
 			VoiceName:   "test_voice",
@@ -48,6 +50,8 @@ func TestAudioVoices(t *testing.T) {
 			VoiceID:     &voiceID,
 			PreviewText: &previewText,
 			Text:        &text,
+			Description: &description,
+			SpaceID:     &spaceID,
 		})
 
 		require.NoError(t, err)

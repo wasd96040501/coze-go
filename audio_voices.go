@@ -32,6 +32,12 @@ func (r *audioVoices) Clone(ctx context.Context, req *CloneAudioVoicesReq) (*Clo
 	if req.Text != nil {
 		fields["text"] = *req.Text
 	}
+	if req.Description != nil {
+		fields["description"] = *req.Description
+	}
+	if req.SpaceID != nil {
+		fields["space_id"] = *req.SpaceID
+	}
 	resp := &cloneAudioVoicesResp{}
 	if err := r.core.UploadFile(ctx, path, req.File, req.VoiceName, fields, resp); err != nil {
 		return nil, err
@@ -97,6 +103,8 @@ type CloneAudioVoicesReq struct {
 	VoiceID     *string
 	PreviewText *string
 	Text        *string
+	SpaceID     *string
+	Description *string
 }
 
 // cloneAudioVoicesResp represents the response for cloning a voice

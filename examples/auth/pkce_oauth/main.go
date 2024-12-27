@@ -44,7 +44,7 @@ func main() {
 
 	// In the SDK, we have wrapped up the code_challenge process of PKCE.
 	// Developers only need to select the code_challenge_method.
-	oauthURL, err := oauth.GenOAuthURL(&coze.GetPKCEAuthURLReq{
+	oauthURL, err := oauth.GetOAuthURL(ctx, &coze.GetPKCEOAuthURLReq{
 		RedirectURI: redirectURI,
 		State:       "state",
 		Method:      coze.CodeChallengeMethodS256.Ptr(),
@@ -58,7 +58,7 @@ func main() {
 
 	//
 	// The space permissions for which the Access Token is granted can be specified. As following codes:
-	// oauthURL, err := oauth.GenOAuthURL(&coze.GetPKCEAuthURLReq{
+	// oauthURL, err := oauth.GenOAuthURL(&coze.GetPKCEOAuthURLReq{
 	//			RedirectURI: redirectURI, State: "state",
 	//			Method: coze.CodeChallengeMethodS256.Ptr(),
 	//			WorkspaceID: utils.ptr("workspace_id"),
@@ -78,7 +78,7 @@ func main() {
 	// After obtaining the code after redirection, the interface to exchange the code for a
 	// token can be invoked to generate the coze access_token of the authorized user.
 	// The developer should use code verifier returned by genOAuthURL() method
-	resp, err := oauth.GetAccessToken(ctx, code, redirectURI, codeVerifier)
+	resp, err := oauth.GetAccessToken(ctx, &coze.GetPKCEAccessTokenReq{Code: code, RedirectURI: redirectURI, CodeVerifier: codeVerifier})
 	if err != nil {
 		fmt.Printf("Failed to get access token: %v\n", err)
 		return

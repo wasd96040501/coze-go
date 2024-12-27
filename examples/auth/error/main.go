@@ -31,11 +31,18 @@ func main() {
 	}
 
 	// Generate the authorization link and direct the user to open it.
-	oauthURL := oauth.GetOAuthURL(redirectURI, "state")
+	oauthURL := oauth.GetOAuthURL(ctx, &coze.GetWebOAuthURLReq{
+		RedirectURI: redirectURI,
+		State:       "state",
+	})
 	fmt.Println(oauthURL)
 
 	// The space permissions for which the Access Token is granted can be specified. As following codes:
-	// oauthURL = oauth.GetOAuthURLWithWorkspace(redirectURI, "state", "workspaceID")
+	// oauthURL := oauth.GetOAuthURL(&coze.GetWebOAuthURLReq{
+	// 	RedirectURI: redirectURI,
+	// 	State:       "state",
+	// 	WorkspaceID: &workspaceID,
+	// })
 	// fmt.Println(oauthURL)
 
 	// After the user clicks the authorization consent button, the coze web page will redirect
@@ -47,7 +54,10 @@ func main() {
 
 	// After obtaining the code after redirection, the interface to exchange the code for a
 	// token can be invoked to generate the coze access_token of the authorized user.
-	resp, err := oauth.GetAccessToken(ctx, code, redirectURI)
+	resp, err := oauth.GetAccessToken(ctx, &coze.GetWebOAuthAccessTokenReq{
+		Code:        code,
+		RedirectURI: redirectURI,
+	})
 	if err != nil {
 		fmt.Printf("Failed to get access token: %v\n", err)
 		// The SDK has enumerated existing authentication error codes

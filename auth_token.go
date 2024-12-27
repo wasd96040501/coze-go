@@ -26,7 +26,7 @@ func NewTokenAuth(accessToken string) Auth {
 	}
 }
 
-func NewJWTAuth(client *JWTOAuthClient, opt *JWTGetAccessTokenOptions) Auth {
+func NewJWTAuth(client *JWTOAuthClient, opt *GetJWTAccessTokenReq) Auth {
 	ttl := 900
 	if opt == nil {
 		return &jwtOAuthImpl{
@@ -67,7 +67,7 @@ func (r *jwtOAuthImpl) Token(ctx context.Context) (string, error) {
 	if !r.needRefresh() {
 		return ptrValue(r.accessToken), nil
 	}
-	resp, err := r.client.GetAccessToken(ctx, &JWTGetAccessTokenOptions{
+	resp, err := r.client.GetAccessToken(ctx, &GetJWTAccessTokenReq{
 		TTL:         r.TTL,
 		SessionName: r.SessionName,
 		Scope:       r.Scope,
