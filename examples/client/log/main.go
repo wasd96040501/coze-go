@@ -32,7 +32,7 @@ func main() {
 	fmt.Printf("Bot retrieve log ID: %s\n", botsResp.Response().LogID())
 
 	// Example 2: Get log ID from chats API
-	chatResp, err := cozeCli.Chats.Create(ctx, &coze.CreateChatsReq{
+	chatResp, err := cozeCli.Chat.Create(ctx, &coze.CreateChatsReq{
 		BotID:  botID,
 		UserID: os.Getenv("USER_ID"),
 		Messages: []*coze.Message{

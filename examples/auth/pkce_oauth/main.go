@@ -67,7 +67,8 @@ func main() {
 	// 	fmt.Printf("Failed to generate OAuth URL with workspaces: %v\n", err)
 	// 	return
 	// }
-	// System.out.println(oauthURL);
+	// fmt.Println(oauthURL.AuthorizationURL)
+	//	fmt.Println(oauthURL.CodeVerifier)
 
 	// After the user clicks the authorization consent button,
 	// the coze web page will redirect to the redirect address configured in the authorization link
@@ -78,7 +79,11 @@ func main() {
 	// After obtaining the code after redirection, the interface to exchange the code for a
 	// token can be invoked to generate the coze access_token of the authorized user.
 	// The developer should use code verifier returned by genOAuthURL() method
-	resp, err := oauth.GetAccessToken(ctx, &coze.GetPKCEAccessTokenReq{Code: code, RedirectURI: redirectURI, CodeVerifier: codeVerifier})
+	resp, err := oauth.GetAccessToken(ctx, &coze.GetPKCEAccessTokenReq{
+		Code:         code,
+		RedirectURI:  redirectURI,
+		CodeVerifier: codeVerifier,
+	})
 	if err != nil {
 		fmt.Printf("Failed to get access token: %v\n", err)
 		return

@@ -16,7 +16,6 @@ func TestBots(t *testing.T) {
 				assert.Equal(t, http.MethodPost, req.Method)
 				assert.Equal(t, "/v1/bot/create", req.URL.Path)
 				return mockResponse(http.StatusOK, &createBotsResp{
-
 					Data: &CreateBotsResp{
 						BotID: "test_bot_id",
 					},
@@ -87,7 +86,6 @@ func TestBots(t *testing.T) {
 				assert.Equal(t, http.MethodPost, req.Method)
 				assert.Equal(t, "/v1/bot/publish", req.URL.Path)
 				return mockResponse(http.StatusOK, &publishBotsResp{
-
 					Data: &PublishBotsResp{
 						BotID:      "test_bot_id",
 						BotVersion: "1.0.0",
@@ -117,7 +115,6 @@ func TestBots(t *testing.T) {
 				assert.Equal(t, "/v1/bot/get_online_info", req.URL.Path)
 				assert.Equal(t, "test_bot_id", req.URL.Query().Get("bot_id"))
 				return mockResponse(http.StatusOK, &retrieveBotsResp{
-
 					Bot: &RetrieveBotsResp{
 						Bot: Bot{
 							BotID:       "test_bot_id",
@@ -184,7 +181,6 @@ func TestBots(t *testing.T) {
 				assert.Equal(t, "1", req.URL.Query().Get("page_index"))
 				assert.Equal(t, "20", req.URL.Query().Get("page_size"))
 				return mockResponse(http.StatusOK, &listBotsResp{
-
 					Data: struct {
 						Bots  []*SimpleBot `json:"space_bots"`
 						Total int          `json:"total"`
@@ -237,7 +233,6 @@ func TestBots(t *testing.T) {
 				assert.Equal(t, "1", req.URL.Query().Get("page_index"))
 				assert.Equal(t, "20", req.URL.Query().Get("page_size"))
 				return mockResponse(http.StatusOK, &listBotsResp{
-
 					Data: struct {
 						Bots  []*SimpleBot `json:"space_bots"`
 						Total int          `json:"total"`

@@ -23,7 +23,6 @@ func TestChatMessages(t *testing.T) {
 
 				// 返回模拟响应
 				return mockResponse(http.StatusOK, &listChatsMessagesResp{
-
 					ListChatsMessagesResp: &ListChatsMessagesResp{
 						Messages: []*Message{
 							{
@@ -93,7 +92,6 @@ func TestChatMessages(t *testing.T) {
 		mockTransport := &mockTransport{
 			roundTripFunc: func(req *http.Request) (*http.Response, error) {
 				return mockResponse(http.StatusOK, &listChatsMessagesResp{
-
 					ListChatsMessagesResp: &ListChatsMessagesResp{
 						Messages: []*Message{},
 					},

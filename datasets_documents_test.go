@@ -140,7 +140,6 @@ func TestDatasetsDocuments(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &listDatasetsDocumentsResp{
-
 					ListDatasetsDocumentsResp: &ListDatasetsDocumentsResp{
 						Total: 2,
 						DocumentInfos: []*Document{
@@ -202,7 +201,6 @@ func TestDatasetsDocuments(t *testing.T) {
 			roundTripFunc: func(req *http.Request) (*http.Response, error) {
 				// Return mock response
 				return mockResponse(http.StatusOK, &listDatasetsDocumentsResp{
-
 					ListDatasetsDocumentsResp: &ListDatasetsDocumentsResp{
 						Total:         0,
 						DocumentInfos: []*Document{},

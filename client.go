@@ -7,7 +7,7 @@ import (
 type CozeAPI struct {
 	Audio         *audio
 	Bots          *bots
-	Chats         *chats
+	Chat          *chat
 	Conversations *conversations
 	Workflows     *workflows
 	Workspaces    *workspace
@@ -77,7 +77,7 @@ func NewCozeAPI(auth Auth, opts ...CozeAPIOption) CozeAPI {
 	cozeClient := CozeAPI{
 		Audio:         newAudio(core),
 		Bots:          newBots(core),
-		Chats:         newChats(core),
+		Chat:          newChats(core),
 		Conversations: newConversations(core),
 		Workflows:     newWorkflows(core),
 		Workspaces:    newWorkspace(core),

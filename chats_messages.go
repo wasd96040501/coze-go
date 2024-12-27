@@ -39,8 +39,8 @@ type ListChatsMessagesReq struct {
 	// initiating a conversation through the Chat API.
 	ConversationID string `json:"conversation_id"`
 
-	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chats through the
-	// Chat API. If it is a streaming response, check the 'id' field in the chats event of the Response.
+	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chat through the
+	// Chat API. If it is a streaming response, check the 'id' field in the chat event of the Response.
 	ChatID string `json:"chat_id"`
 }
 

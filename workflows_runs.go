@@ -21,7 +21,7 @@ func (r *workflowRuns) Create(ctx context.Context, req *RunWorkflowsReq) (*RunWo
 	return resp.RunWorkflowsResp, nil
 }
 
-func (r *workflowRuns) Resume(ctx context.Context, req *ResumeRunWorkflowsReq) (*WorkflowEventReader, error) {
+func (r *workflowRuns) Resume(ctx context.Context, req *ResumeRunWorkflowsReq) (Stream[WorkflowEvent], error) {
 	method := http.MethodPost
 	uri := "/v1/workflow/stream_resume"
 	resp, err := r.client.RawRequest(ctx, method, uri, req)
@@ -29,18 +29,16 @@ func (r *workflowRuns) Resume(ctx context.Context, req *ResumeRunWorkflowsReq) (
 		return nil, err
 	}
 
-	return &WorkflowEventReader{
-		streamReader: &streamReader[WorkflowEvent]{
-			ctx:          ctx,
-			response:     resp,
-			reader:       bufio.NewReader(resp.Body),
-			processor:    parseWorkflowEvent,
-			httpResponse: newHTTPResponse(resp),
-		},
+	return &streamReader[WorkflowEvent]{
+		ctx:          ctx,
+		response:     resp,
+		reader:       bufio.NewReader(resp.Body),
+		processor:    parseWorkflowEvent,
+		httpResponse: newHTTPResponse(resp),
 	}, nil
 }
 
-func (r *workflowRuns) Stream(ctx context.Context, req *RunWorkflowsReq) (*WorkflowEventReader, error) {
+func (r *workflowRuns) Stream(ctx context.Context, req *RunWorkflowsReq) (Stream[WorkflowEvent], error) {
 	method := http.MethodPost
 	uri := "/v1/workflow/stream_run"
 	resp, err := r.client.RawRequest(ctx, method, uri, req)
@@ -48,14 +46,12 @@ func (r *workflowRuns) Stream(ctx context.Context, req *RunWorkflowsReq) (*Workf
 		return nil, err
 	}
 
-	return &WorkflowEventReader{
-		streamReader: &streamReader[WorkflowEvent]{
-			ctx:          ctx,
-			response:     resp,
-			reader:       bufio.NewReader(resp.Body),
-			processor:    parseWorkflowEvent,
-			httpResponse: newHTTPResponse(resp),
-		},
+	return &streamReader[WorkflowEvent]{
+		ctx:          ctx,
+		response:     resp,
+		reader:       bufio.NewReader(resp.Body),
+		processor:    parseWorkflowEvent,
+		httpResponse: newHTTPResponse(resp),
 	}, nil
 }
 
@@ -69,10 +65,6 @@ func newWorkflowRun(core *core) *workflowRuns {
 		client:    core,
 		Histories: newWorkflowRunsHistories(core),
 	}
-}
-
-type WorkflowEventReader struct {
-	*streamReader[WorkflowEvent]
 }
 
 func parseWorkflowEvent(lineBytes []byte, reader *bufio.Reader) (*WorkflowEvent, bool, error) {

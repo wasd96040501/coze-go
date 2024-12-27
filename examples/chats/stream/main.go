@@ -39,7 +39,7 @@ func main() {
 		},
 	}
 
-	resp, err := cozeCli.Chats.Stream(ctx, req)
+	resp, err := cozeCli.Chat.Stream(ctx, req)
 	if err != nil {
 		fmt.Printf("Error starting chats: %v\n", err)
 		return
@@ -65,5 +65,5 @@ func main() {
 		}
 	}
 
-	fmt.Printf("done, log:%s\n", resp.LogID())
+	fmt.Printf("done, log:%s\n", resp.Response().LogID())
 }

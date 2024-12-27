@@ -12,6 +12,11 @@ type streamable interface {
 	ChatEvent | WorkflowEvent
 }
 
+type Stream[T streamable] interface {
+	Responser
+	Close() error
+	Recv() (*T, error)
+}
 type eventProcessor[T streamable] func(line []byte, reader *bufio.Reader) (*T, bool, error)
 
 type streamReader[T streamable] struct {
@@ -28,7 +33,6 @@ func (s *streamReader[T]) Recv() (response *T, err error) {
 	return s.processLines()
 }
 
-//nolint:gocognit
 func (s *streamReader[T]) processLines() (*T, error) {
 	err := s.checkRespErr()
 	if err != nil {
@@ -77,13 +81,6 @@ func (s *streamReader[T]) Close() error {
 	return s.response.Body.Close()
 }
 
-func (s *streamReader[T]) HTTPResponse() HTTPResponse {
+func (s *streamReader[T]) Response() HTTPResponse {
 	return s.httpResponse
-}
-
-func (s *streamReader[T]) LogID() string {
-	if s.httpResponse == nil {
-		return ""
-	}
-	return s.httpResponse.LogID()
 }

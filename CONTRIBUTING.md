@@ -27,6 +27,11 @@ go test -coverprofile=coverage.out ./...
 go tool cover -html=coverage.out  # View coverage report in browser
 ```
 
+Check code format:
+```shell
+gofumpt -l -w . 
+```
+
 ## Building the project
 
 To build the project:

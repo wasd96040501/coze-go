@@ -20,7 +20,6 @@ func TestWorkflowRuns(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &runWorkflowsResp{
-
 					RunWorkflowsResp: &RunWorkflowsResp{
 						ExecuteID: "exec1",
 						Data:      `{"result": "success"}`,

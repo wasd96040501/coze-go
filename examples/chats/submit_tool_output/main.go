@@ -35,7 +35,7 @@ func main() {
 	var pluginEvent *coze.ChatEvent
 	var conversationID string
 
-	resp, err := cozeCli.Chats.Stream(ctx, req)
+	resp, err := cozeCli.Chat.Stream(ctx, req)
 	if err != nil {
 		fmt.Println("Error starting stream:", err)
 		return
@@ -91,7 +91,7 @@ func main() {
 		ToolOutputs:    toolOutputs,
 	}
 
-	resp2, err := cozeCli.Chats.StreamSubmitToolOutputs(ctx, toolReq)
+	resp2, err := cozeCli.Chat.StreamSubmitToolOutputs(ctx, toolReq)
 	if err != nil {
 		fmt.Println("Error submitting tool outputs:", err)
 		return
@@ -115,5 +115,5 @@ func main() {
 		}
 	}
 
-	fmt.Printf("done, log:%s\n", resp.HTTPResponse().LogID())
+	fmt.Printf("done, log:%s\n", resp.Response().LogID())
 }

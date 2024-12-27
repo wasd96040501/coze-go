@@ -34,7 +34,6 @@ func TestChats(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &createChatsResp{
-
 					Chat: &CreateChatsResp{Chat: Chat{
 						ID:             "chat1",
 						ConversationID: "test_conversation_id",
@@ -75,7 +74,6 @@ func TestChats(t *testing.T) {
 				case "/v3/chat":
 					// Return create response
 					return mockResponse(http.StatusOK, &createChatsResp{
-
 						Chat: &CreateChatsResp{Chat: Chat{
 							ID:             "chat1",
 							ConversationID: "test_conversation_id",
@@ -86,7 +84,6 @@ func TestChats(t *testing.T) {
 				case "/v3/chat/retrieve":
 					// Return retrieve response with completed status
 					return mockResponse(http.StatusOK, &retrieveChatsResp{
-
 						Chat: &RetrieveChatsResp{
 							Chat: Chat{
 								ID:             "chat1",
@@ -98,7 +95,6 @@ func TestChats(t *testing.T) {
 				case "/v3/chat/message/list":
 					// Return message list response
 					return mockResponse(http.StatusOK, &listChatsMessagesResp{
-
 						ListChatsMessagesResp: &ListChatsMessagesResp{
 							Messages: []*Message{
 								{
@@ -112,7 +108,6 @@ func TestChats(t *testing.T) {
 					})
 				case "/v3/chat/cancel":
 					return mockResponse(http.StatusOK, &cancelChatsResp{
-
 						Chat: &CancelChatsResp{
 							Chat: Chat{
 								ID:             "chat1",
@@ -177,7 +172,7 @@ func TestChats(t *testing.T) {
 				assert.Equal(t, "test_conversation_id", req.URL.Query().Get("conversation_id"))
 
 				// Return mock response with streaming data
-				return mockStreamResponse(`event: conversation.chats.created
+				return mockStreamResponse(`event: conversation.chat.created
 data: {"id":"chat1","conversation_id":"test_conversation_id","bot_id":"bot1","status":"created"}
 
 event: conversation.message.delta
@@ -227,7 +222,6 @@ data:
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &cancelChatsResp{
-
 					Chat: &CancelChatsResp{
 						Chat: Chat{
 							ID:             "chat1",
@@ -267,7 +261,6 @@ data:
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &retrieveChatsResp{
-
 					Chat: &RetrieveChatsResp{
 						Chat: Chat{
 							ID:             "chat1",
@@ -306,7 +299,6 @@ data:
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &submitToolOutputsChatResp{
-
 					Chat: &SubmitToolOutputsChatResp{Chat: Chat{
 						ID:             "chat1",
 						ConversationID: "test_conversation_id",
@@ -348,7 +340,7 @@ data:
 				assert.Equal(t, "chat1", req.URL.Query().Get("chat_id"))
 
 				// Return mock streaming response
-				return mockStreamResponse(`event: conversation.chats.in_progress
+				return mockStreamResponse(`event: conversation.chat.in_progress
 data: {"id":"chat1","conversation_id":"test_conversation_id","status":"in_progress"}
 
 event: conversation.message.delta

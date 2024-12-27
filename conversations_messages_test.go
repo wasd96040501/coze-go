@@ -23,7 +23,6 @@ func TestConversationsMessages(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &createMessageResp{
-
 					Message: &CreateMessageResp{
 						Message: Message{
 							ID:             "msg1",
@@ -76,7 +75,6 @@ func TestConversationsMessages(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &listConversationsMessagesResp{
-
 					ListConversationsMessagesResp: &ListConversationsMessagesResp{
 						HasMore: true,
 						FirstID: "msg1",
@@ -142,7 +140,6 @@ func TestConversationsMessages(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &retrieveConversationsMessagesResp{
-
 					Message: &RetrieveConversationsMessagesResp{
 						Message: Message{
 							ID:             "msg1",
@@ -187,7 +184,6 @@ func TestConversationsMessages(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &updateConversationMessagesResp{
-
 					Message: &UpdateConversationMessagesResp{
 						Message: Message{
 							ID:             "msg1",
@@ -241,7 +237,6 @@ func TestConversationsMessages(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &deleteConversationsMessagesResp{
-
 					Message: &DeleteConversationsMessagesResp{
 						Message: Message{
 							ID:             "msg1",
@@ -272,7 +267,6 @@ func TestConversationsMessages(t *testing.T) {
 			roundTripFunc: func(req *http.Request) (*http.Response, error) {
 				// Return mock response
 				return mockResponse(http.StatusOK, &listConversationsMessagesResp{
-
 					ListConversationsMessagesResp: &ListConversationsMessagesResp{
 						HasMore:  false,
 						Messages: []*Message{},
@@ -299,7 +293,6 @@ func TestConversationsMessages(t *testing.T) {
 			roundTripFunc: func(req *http.Request) (*http.Response, error) {
 				// Return mock response
 				return mockResponse(http.StatusOK, &createMessageResp{
-
 					Message: &CreateMessageResp{
 						Message: Message{
 							ID:             "msg1",

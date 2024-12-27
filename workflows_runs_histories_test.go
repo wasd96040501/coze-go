@@ -20,7 +20,6 @@ func TestWorkflowRunsHistories(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &retrieveWorkflowRunsHistoriesResp{
-
 					RetrieveWorkflowRunsHistoriesResp: &RetrieveWorkflowRunsHistoriesResp{
 						Histories: []*WorkflowRunHistory{
 							{

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (r *chats) Create(ctx context.Context, req *CreateChatsReq) (*CreateChatsResp, error) {
+func (r *chat) Create(ctx context.Context, req *CreateChatsReq) (*CreateChatsResp, error) {
 	method := http.MethodPost
 	uri := "/v3/chat"
 	resp := &createChatsResp{}
@@ -24,7 +24,7 @@ func (r *chats) Create(ctx context.Context, req *CreateChatsReq) (*CreateChatsRe
 	return resp.Chat, nil
 }
 
-func (r *chats) CreateAndPoll(ctx context.Context, req *CreateChatsReq, timeout *int) (*ChatPoll, error) {
+func (r *chat) CreateAndPoll(ctx context.Context, req *CreateChatsReq, timeout *int) (*ChatPoll, error) {
 	req.Stream = ptr(false)
 	req.AutoSaveHistory = ptr(true)
 
@@ -44,7 +44,7 @@ func (r *chats) CreateAndPoll(ctx context.Context, req *CreateChatsReq, timeout 
 				ChatID:         chat.ID,
 			})
 			if err != nil {
-				logger.Warnf(ctx, "Cancel chats failed, err:%v", err)
+				logger.Warnf(ctx, "Cancel chat failed, err:%v", err)
 				return nil, err
 			}
 			chat = cancelResp.Chat
@@ -76,7 +76,7 @@ func (r *chats) CreateAndPoll(ctx context.Context, req *CreateChatsReq, timeout 
 	}, nil
 }
 
-func (r *chats) Stream(ctx context.Context, req *CreateChatsReq) (*ChatEventReader, error) {
+func (r *chat) Stream(ctx context.Context, req *CreateChatsReq) (Stream[ChatEvent], error) {
 	method := http.MethodPost
 	uri := "/v3/chat"
 	req.Stream = ptr(true)
@@ -85,31 +85,25 @@ func (r *chats) Stream(ctx context.Context, req *CreateChatsReq) (*ChatEventRead
 		return nil, err
 	}
 
-	return &ChatEventReader{
-		streamReader: &streamReader[ChatEvent]{
-			ctx:          ctx,
-			response:     resp,
-			reader:       bufio.NewReader(resp.Body),
-			processor:    parseChatEvent,
-			httpResponse: newHTTPResponse(resp),
-		},
+	return &streamReader[ChatEvent]{
+		ctx:          ctx,
+		response:     resp,
+		reader:       bufio.NewReader(resp.Body),
+		processor:    parseChatEvent,
+		httpResponse: newHTTPResponse(resp),
 	}, nil
 }
 
-type chats struct {
+type chat struct {
 	client   *core
 	Messages *chatMessages
 }
 
-func newChats(core *core) *chats {
-	return &chats{
+func newChats(core *core) *chat {
+	return &chat{
 		client:   core,
 		Messages: newChatMessages(core),
 	}
-}
-
-type ChatEventReader struct {
-	*streamReader[ChatEvent]
 }
 
 func parseChatEvent(lineBytes []byte, reader *bufio.Reader) (*ChatEvent, bool, error) {
@@ -137,7 +131,7 @@ func parseChatEvent(lineBytes []byte, reader *bufio.Reader) (*ChatEvent, bool, e
 	return nil, false, nil
 }
 
-func (r *chats) Cancel(ctx context.Context, req *CancelChatsReq) (*CancelChatsResp, error) {
+func (r *chat) Cancel(ctx context.Context, req *CancelChatsReq) (*CancelChatsResp, error) {
 	method := http.MethodPost
 	uri := "/v3/chat/cancel"
 	resp := &cancelChatsResp{}
@@ -149,7 +143,7 @@ func (r *chats) Cancel(ctx context.Context, req *CancelChatsReq) (*CancelChatsRe
 	return resp.Chat, nil
 }
 
-func (r *chats) Retrieve(ctx context.Context, req *RetrieveChatsReq) (*RetrieveChatsResp, error) {
+func (r *chat) Retrieve(ctx context.Context, req *RetrieveChatsReq) (*RetrieveChatsResp, error) {
 	method := http.MethodGet
 	uri := "/v3/chat/retrieve"
 	resp := &retrieveChatsResp{}
@@ -164,7 +158,7 @@ func (r *chats) Retrieve(ctx context.Context, req *RetrieveChatsReq) (*RetrieveC
 	return resp.Chat, nil
 }
 
-func (r *chats) SubmitToolOutputs(ctx context.Context, req *SubmitToolOutputsChatReq) (*SubmitToolOutputsChatResp, error) {
+func (r *chat) SubmitToolOutputs(ctx context.Context, req *SubmitToolOutputsChatReq) (*SubmitToolOutputsChatResp, error) {
 	method := http.MethodPost
 	uri := "/v3/chat/submit_tool_outputs"
 	resp := &submitToolOutputsChatResp{}
@@ -180,7 +174,7 @@ func (r *chats) SubmitToolOutputs(ctx context.Context, req *SubmitToolOutputsCha
 	return resp.Chat, nil
 }
 
-func (r *chats) StreamSubmitToolOutputs(ctx context.Context, req *SubmitToolOutputsChatReq) (*ChatEventReader, error) {
+func (r *chat) StreamSubmitToolOutputs(ctx context.Context, req *SubmitToolOutputsChatReq) (Stream[ChatEvent], error) {
 	method := http.MethodPost
 	req.Stream = ptr(true)
 	uri := "/v3/chat/submit_tool_outputs"
@@ -192,14 +186,12 @@ func (r *chats) StreamSubmitToolOutputs(ctx context.Context, req *SubmitToolOutp
 		return nil, err
 	}
 
-	return &ChatEventReader{
-		streamReader: &streamReader[ChatEvent]{
-			ctx:          ctx,
-			response:     resp,
-			reader:       bufio.NewReader(resp.Body),
-			processor:    parseChatEvent,
-			httpResponse: newHTTPResponse(resp),
-		},
+	return &streamReader[ChatEvent]{
+		ctx:          ctx,
+		response:     resp,
+		reader:       bufio.NewReader(resp.Body),
+		processor:    parseChatEvent,
+		httpResponse: newHTTPResponse(resp),
 	}, nil
 }
 
@@ -217,28 +209,28 @@ const (
 	ChatStatusFailed ChatStatus = "failed"
 	// ChatStatusRequiresAction The session is interrupted and requires further processing.
 	ChatStatusRequiresAction ChatStatus = "requires_action"
-	// ChatStatusCancelled The session is user cancelled chats.
+	// ChatStatusCancelled The session is user cancelled chat.
 	ChatStatusCancelled ChatStatus = "canceled"
 )
 
-// ChatEventType Event types for chats.
+// ChatEventType Event types for chat.
 type ChatEventType string
 
 const (
 	// ChatEventConversationChatCreated Event for creating a conversation, indicating the start of the conversation.
-	ChatEventConversationChatCreated ChatEventType = "conversation.chats.created"
+	ChatEventConversationChatCreated ChatEventType = "conversation.chat.created"
 	// ChatEventConversationChatInProgress The server is processing the conversation.
-	ChatEventConversationChatInProgress ChatEventType = "conversation.chats.in_progress"
+	ChatEventConversationChatInProgress ChatEventType = "conversation.chat.in_progress"
 	// ChatEventConversationMessageDelta Incremental message, usually an incremental message when type=answer.
 	ChatEventConversationMessageDelta ChatEventType = "conversation.message.delta"
 	// ChatEventConversationMessageCompleted The message has been completely replied to.
 	ChatEventConversationMessageCompleted ChatEventType = "conversation.message.completed"
 	// ChatEventConversationChatCompleted The conversation is completed.
-	ChatEventConversationChatCompleted ChatEventType = "conversation.chats.completed"
+	ChatEventConversationChatCompleted ChatEventType = "conversation.chat.completed"
 	// ChatEventConversationChatFailed This event is used to mark a failed conversation.
-	ChatEventConversationChatFailed ChatEventType = "conversation.chats.failed"
+	ChatEventConversationChatFailed ChatEventType = "conversation.chat.failed"
 	// ChatEventConversationChatRequiresAction The conversation is interrupted and requires the user to report the execution results of the tool.
-	ChatEventConversationChatRequiresAction ChatEventType = "conversation.chats.requires_action"
+	ChatEventConversationChatRequiresAction ChatEventType = "conversation.chat.requires_action"
 	// ChatEventConversationAudioDelta Audio delta event
 	ChatEventConversationAudioDelta ChatEventType = "conversation.audio.delta"
 	// ChatEventError Error events during the streaming response process.
@@ -247,24 +239,24 @@ const (
 	ChatEventDone ChatEventType = "done"
 )
 
-// Chat represents chats information
+// Chat represents chat information
 type Chat struct {
-	// The ID of the chats.
+	// The ID of the chat.
 	ID string `json:"id"`
 	// The ID of the conversation.
 	ConversationID string `json:"conversation_id"`
 	// The ID of the bot.
 	BotID string `json:"bot_id"`
-	// Indicates the create time of the chats. The value format is Unix timestamp in seconds.
+	// Indicates the create time of the chat. The value format is Unix timestamp in seconds.
 	CreatedAt int `json:"created_at"`
-	// Indicates the end time of the chats. The value format is Unix timestamp in seconds.
+	// Indicates the end time of the chat. The value format is Unix timestamp in seconds.
 	CompletedAt int `json:"completed_at,omitempty"`
-	// Indicates the failure time of the chats. The value format is Unix timestamp in seconds.
+	// Indicates the failure time of the chat. The value format is Unix timestamp in seconds.
 	FailedAt int `json:"failed_at,omitempty"`
 	// Additional information when creating a message, and this additional information will also be
 	// returned when retrieving messages.
 	MetaData map[string]string `json:"meta_data,omitempty"`
-	// When the chats encounters an auth_error, this field returns detailed error information.
+	// When the chat encounters an auth_error, this field returns detailed error information.
 	LastError *ChatError `json:"last_error,omitempty"`
 	// The running status of the session.
 	Status ChatStatus `json:"status"`
@@ -284,7 +276,7 @@ type ChatError struct {
 
 // ChatUsage represents token usage information
 type ChatUsage struct {
-	// The total number of Tokens consumed in this chats, including the consumption for both the input
+	// The total number of Tokens consumed in this chat, including the consumption for both the input
 	// and output parts.
 	TokenCount int `json:"token_count"`
 	// The total number of Tokens consumed for the output part.
@@ -298,7 +290,7 @@ type ChatRequiredAction struct {
 	// The type of additional operation, with the enum value of submit_tool_outputs.
 	Type string `json:"type"`
 	// Details of the results that need to be submitted, uploaded through the submission API, and the
-	// chats can continue afterward.
+	// chat can continue afterward.
 	SubmitToolOutputs *ChatSubmitToolOutputs `json:"submit_tool_outputs,omitempty"`
 }
 
@@ -335,15 +327,15 @@ type ToolOutput struct {
 	Output string `json:"output"`
 }
 
-// CreateChatsReq represents the request to create a chats
+// CreateChatsReq represents the request to create a chat
 type CreateChatsReq struct {
-	// Indicate which conversation the chats is taking place in.
+	// Indicate which conversation the chat is taking place in.
 	ConversationID string `json:"-"`
 
 	// The ID of the bot that the API interacts with.
 	BotID string `json:"bot_id"`
 
-	// The user who calls the API to chats with the bot.
+	// The user who calls the API to chat with the bot.
 	UserID string `json:"user_id"`
 
 	// Additional information for the conversation. You can pass the user's query for this
@@ -363,25 +355,25 @@ type CreateChatsReq struct {
 	MetaData map[string]string `json:"meta_data,omitempty"`
 }
 
-// CancelChatsReq represents the request to cancel a chats
+// CancelChatsReq represents the request to cancel a chat
 type CancelChatsReq struct {
 	// The Conversation ID can be viewed in the 'conversation_id' field of the Response when
 	// initiating a conversation through the Chat API.
 	ConversationID string `json:"conversation_id"`
 
-	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chats through the
-	// Chat API. If it is a streaming response, check the 'id' field in the chats event of the Response.
+	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chat through the
+	// Chat API. If it is a streaming response, check the 'id' field in the chat event of the Response.
 	ChatID string `json:"chat_id"`
 }
 
-// RetrieveChatsReq represents the request to retrieve a chats
+// RetrieveChatsReq represents the request to retrieve a chat
 type RetrieveChatsReq struct {
 	// The Conversation ID can be viewed in the 'conversation_id' field of the Response when
 	// initiating a conversation through the Chat API.
 	ConversationID string `json:"conversation_id"`
 
-	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chats through the
-	// Chat API. If it is a streaming response, check the 'id' field in the chats event of the Response.
+	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chat through the
+	// Chat API. If it is a streaming response, check the 'id' field in the chat event of the Response.
 	ChatID string `json:"chat_id"`
 }
 
@@ -391,8 +383,8 @@ type SubmitToolOutputsChatReq struct {
 	// initiating a conversation through the Chat API.
 	ConversationID string `json:"-"`
 
-	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chats through the
-	// Chat API. If it is a streaming response, check the 'id' field in the chats event of the Response.
+	// The Chat ID can be viewed in the 'id' field of the Response when initiating a chat through the
+	// Chat API. If it is a streaming response, check the 'id' field in the chat event of the Response.
 	ChatID string `json:"-"`
 
 	// The execution result of the tool. For detailed instructions, refer to the ToolOutput Object
@@ -401,7 +393,7 @@ type SubmitToolOutputsChatReq struct {
 	Stream *bool `json:"stream,omitempty"`
 }
 
-// CreateChatsResp represents the response to create a chats
+// CreateChatsResp represents the response to create a chat
 type createChatsResp struct {
 	baseResponse
 	Chat *CreateChatsResp `json:"data"`
@@ -412,7 +404,7 @@ type CreateChatsResp struct {
 	baseModel
 }
 
-// CancelChatsResp represents the response to cancel a chats
+// CancelChatsResp represents the response to cancel a chat
 type cancelChatsResp struct {
 	baseResponse
 	Chat *CancelChatsResp `json:"data"`
@@ -423,7 +415,7 @@ type CancelChatsResp struct {
 	Chat
 }
 
-// RetrieveChatsResp represents the response to retrieve a chats
+// RetrieveChatsResp represents the response to retrieve a chat
 type retrieveChatsResp struct {
 	baseResponse
 	Chat *RetrieveChatsResp `json:"data"`
@@ -445,10 +437,10 @@ type SubmitToolOutputsChatResp struct {
 	Chat
 }
 
-// ChatEvent represents a chats event in the streaming response
+// ChatEvent represents a chat event in the streaming response
 type ChatEvent struct {
 	Event   ChatEventType `json:"event"`
-	Chat    *Chat         `json:"chats,omitempty"`
+	Chat    *Chat         `json:"chat,omitempty"`
 	Message *Message      `json:"message,omitempty"`
 }
 
@@ -481,8 +473,8 @@ func (c *ChatEvent) IsDone() bool {
 	return c.Event == ChatEventDone || c.Event == ChatEventError
 }
 
-// ChatPoll represents polling information for a chats
+// ChatPoll represents polling information for a chat
 type ChatPoll struct {
-	Chat     *Chat      `json:"chats"`
+	Chat     *Chat      `json:"chat"`
 	Messages []*Message `json:"messages"`
 }

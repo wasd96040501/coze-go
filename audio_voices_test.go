@@ -21,7 +21,6 @@ func TestAudioVoices(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &cloneAudioVoicesResp{
-
 					Data: &CloneAudioVoicesResp{
 						VoiceID: "voice1",
 					},
@@ -110,7 +109,6 @@ func TestAudioVoices(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &ListAudioVoicesResp{
-
 					Data: struct {
 						VoiceList []*Voice `json:"voice_list"`
 					}{
@@ -194,7 +192,6 @@ func TestAudioVoices(t *testing.T) {
 
 				// Return mock response with empty list
 				return mockResponse(http.StatusOK, &ListAudioVoicesResp{
-
 					Data: struct {
 						VoiceList []*Voice `json:"voice_list"`
 					}{

@@ -25,7 +25,6 @@ func TestConversations(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &listConversationsResp{
-
 					Data: &ListConversationsResp{
 						HasMore: true,
 						Conversations: []*Conversation{
@@ -88,7 +87,6 @@ func TestConversations(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &createConversationsResp{
-
 					Conversation: &CreateConversationsResp{
 						Conversation: Conversation{
 							ID:            "conv1",
@@ -140,7 +138,6 @@ func TestConversations(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &retrieveConversationsResp{
-
 					Conversation: &RetrieveConversationsResp{
 						Conversation: Conversation{
 							ID:            "conv1",
@@ -180,7 +177,6 @@ func TestConversations(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &clearConversationsResp{
-
 					Data: &ClearConversationsResp{
 						ConversationID: "conv1",
 					},
@@ -210,7 +206,6 @@ func TestConversations(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &listConversationsResp{
-
 					Data: &ListConversationsResp{
 						HasMore:       false,
 						Conversations: []*Conversation{},

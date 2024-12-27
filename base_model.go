@@ -2,6 +2,10 @@ package coze
 
 import "net/http"
 
+type Responser interface {
+	Response() HTTPResponse
+}
+
 type HTTPResponse interface {
 	LogID() string
 }

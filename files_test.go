@@ -21,7 +21,6 @@ func TestFiles(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &uploadFilesResp{
-
 					FileInfo: &UploadFilesResp{
 						FileInfo: FileInfo{
 							ID:        "file1",
@@ -65,7 +64,6 @@ func TestFiles(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &retrieveFilesResp{
-
 					FileInfo: &RetrieveFilesResp{
 						FileInfo: FileInfo{
 							ID:        "file1",

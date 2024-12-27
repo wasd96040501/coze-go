@@ -41,7 +41,7 @@ func main() {
 		},
 	}
 
-	chatResp, err := cozeCli.Chats.Create(ctx, req)
+	chatResp, err := cozeCli.Chat.Create(ctx, req)
 	if err != nil {
 		fmt.Println("Error creating chats:", err)
 		return
@@ -67,7 +67,7 @@ func main() {
 		select {
 		case <-timeout:
 			// The chats can be cancelled before its completed.
-			cancelResp, err := cozeCli.Chats.Cancel(ctx, &coze.CancelChatsReq{
+			cancelResp, err := cozeCli.Chat.Cancel(ctx, &coze.CancelChatsReq{
 				ConversationID: conversationID,
 				ChatID:         chatID,
 			})
@@ -79,7 +79,7 @@ func main() {
 			fmt.Println(cancelResp.LogID())
 			break
 		case <-ticker.C:
-			resp, err := cozeCli.Chats.Retrieve(ctx, &coze.RetrieveChatsReq{
+			resp, err := cozeCli.Chat.Retrieve(ctx, &coze.RetrieveChatsReq{
 				ConversationID: conversationID,
 				ChatID:         chatID,
 			})
@@ -98,7 +98,7 @@ func main() {
 	}
 
 	// The sdk provide an automatic polling method.
-	chat2, err := cozeCli.Chats.CreateAndPoll(ctx, req, nil)
+	chat2, err := cozeCli.Chat.CreateAndPoll(ctx, req, nil)
 	if err != nil {
 		fmt.Println("Error in CreateAndPoll:", err)
 		return
@@ -107,7 +107,7 @@ func main() {
 
 	// the developer can also set the timeout.
 	pollTimeout := 10
-	chat3, err := cozeCli.Chats.CreateAndPoll(ctx, req, &pollTimeout)
+	chat3, err := cozeCli.Chat.CreateAndPoll(ctx, req, &pollTimeout)
 	if err != nil {
 		fmt.Println("Error in CreateAndPollWithTimeout:", err)
 		return

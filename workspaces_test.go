@@ -24,7 +24,6 @@ func TestWorkspaces(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &listWorkspaceResp{
-
 					Data: &ListWorkspaceResp{
 						TotalCount: 2,
 						Workspaces: []*Workspace{
@@ -86,7 +85,6 @@ func TestWorkspaces(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &listWorkspaceResp{
-
 					Data: &ListWorkspaceResp{
 						TotalCount: 0,
 						Workspaces: []*Workspace{},

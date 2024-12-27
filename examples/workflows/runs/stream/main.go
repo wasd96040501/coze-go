@@ -44,7 +44,7 @@ func main() {
 // The stream interface will return an iterator of WorkflowEvent. Developers should iterate
 // through this iterator to obtain WorkflowEvent and handle them separately according to
 // the type of WorkflowEvent.
-func handleEvents(ctx context.Context, resp *coze.WorkflowEventReader, cozeCli coze.CozeAPI, workflowID string) {
+func handleEvents(ctx context.Context, resp coze.Stream[coze.WorkflowEvent], cozeCli coze.CozeAPI, workflowID string) {
 	defer resp.Close()
 	for {
 		event, err := resp.Recv()
@@ -80,5 +80,5 @@ func handleEvents(ctx context.Context, resp *coze.WorkflowEventReader, cozeCli c
 			handleEvents(ctx, newResp, cozeCli, workflowID)
 		}
 	}
-	fmt.Printf("done, log:%s\n", resp.HTTPResponse().LogID())
+	fmt.Printf("done, log:%s\n", resp.Response().LogID())
 }

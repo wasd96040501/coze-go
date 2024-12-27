@@ -20,7 +20,6 @@ func TestAudioRooms(t *testing.T) {
 
 				// Return mock response
 				return mockResponse(http.StatusOK, &createAudioRoomsResp{
-
 					Data: &CreateAudioRoomsResp{
 						RoomID: "room1",
 						AppID:  "app1",
@@ -60,7 +59,6 @@ func TestAudioRooms(t *testing.T) {
 			roundTripFunc: func(req *http.Request) (*http.Response, error) {
 				// Return mock response
 				return mockResponse(http.StatusOK, &createAudioRoomsResp{
-
 					Data: &CreateAudioRoomsResp{
 						RoomID: "room1",
 						AppID:  "app1",

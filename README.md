@@ -100,7 +100,7 @@ func main() {
         },
     }
     
-    chat, err := cozeCli.Chats.CreateAndPoll(ctx, req, nil)
+    chat, err := cozeCli.Chat.CreateAndPoll(ctx, req, nil)
     if err != nil {
         fmt.Println("Error:", err)
         return
@@ -114,7 +114,7 @@ func main() {
 
 #### Stream Chat
 
-Use cozeCli.Chats.Stream() to create a streaming chat session:
+Use cozeCli.Chat.Stream() to create a streaming chat session:
 
 ```go
 func main() {
@@ -132,7 +132,7 @@ func main() {
         },
     }
     
-    resp, err := cozeCli.Chats.Stream(ctx, req)
+    resp, err := cozeCli.Chat.Stream(ctx, req)
     if err != nil {
         fmt.Println("Error starting stream:", err)
         return
@@ -225,7 +225,7 @@ func main() {
 The SDK uses Go's standard error handling patterns. All API calls return an error value that should be checked:
 
 ```go
-resp, err := cozeCli.Chats.Chat(ctx, req)
+resp, err := cozeCli.Chat.Create(ctx, req)
 if err != nil {
     if cozeErr, ok := coze.AsCozeError(err); ok {
     // Handle Coze API error

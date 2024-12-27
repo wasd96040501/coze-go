@@ -24,6 +24,8 @@ jobs:
           
       - name: Install dependencies
         run: go mod download
+          
+             go install mvdan.cc/gofumpt@v0.5.0
         
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
@@ -34,7 +36,14 @@ jobs:
       - name: Run go build
         run: |
           go build ./...
-          
+
+      - name: Run gofumpt
+        run: |
+          if ! test -z "$(gofumpt -d -e . | tee /dev/stderr)"; then
+            echo "❗️ gofumpt check failed"
+            exit 1
+          fi
+
       - name: Run tests with coverage
         run: |
           go test -race -coverprofile=coverage.out $(go list ./... | grep -v /examples/)

@@ -28,7 +28,7 @@ func TestNewCozeAPI(t *testing.T) {
 		assert.Equal(t, ComBaseURL, api.baseURL)
 		assert.NotNil(t, api.Audio)
 		assert.NotNil(t, api.Bots)
-		assert.NotNil(t, api.Chats)
+		assert.NotNil(t, api.Chat)
 		assert.NotNil(t, api.Conversations)
 		assert.NotNil(t, api.Workflows)
 		assert.NotNil(t, api.Workspaces)
