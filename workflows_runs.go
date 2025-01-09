@@ -24,7 +24,7 @@ func (r *workflowRuns) Create(ctx context.Context, req *RunWorkflowsReq) (*RunWo
 func (r *workflowRuns) Resume(ctx context.Context, req *ResumeRunWorkflowsReq) (Stream[WorkflowEvent], error) {
 	method := http.MethodPost
 	uri := "/v1/workflow/stream_resume"
-	resp, err := r.client.RawRequest(ctx, method, uri, req)
+	resp, err := r.client.StreamRequest(ctx, method, uri, req)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (r *workflowRuns) Resume(ctx context.Context, req *ResumeRunWorkflowsReq) (
 func (r *workflowRuns) Stream(ctx context.Context, req *RunWorkflowsReq) (Stream[WorkflowEvent], error) {
 	method := http.MethodPost
 	uri := "/v1/workflow/stream_run"
-	resp, err := r.client.RawRequest(ctx, method, uri, req)
+	resp, err := r.client.StreamRequest(ctx, method, uri, req)
 	if err != nil {
 		return nil, err
 	}

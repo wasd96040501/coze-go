@@ -80,7 +80,7 @@ func (r *chat) Stream(ctx context.Context, req *CreateChatsReq) (Stream[ChatEven
 	method := http.MethodPost
 	uri := "/v3/chat"
 	req.Stream = ptr(true)
-	resp, err := r.client.RawRequest(ctx, method, uri, req, withHTTPQuery("conversation_id", req.ConversationID))
+	resp, err := r.client.StreamRequest(ctx, method, uri, req, withHTTPQuery("conversation_id", req.ConversationID))
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func (r *chat) StreamSubmitToolOutputs(ctx context.Context, req *SubmitToolOutpu
 	method := http.MethodPost
 	req.Stream = ptr(true)
 	uri := "/v3/chat/submit_tool_outputs"
-	resp, err := r.client.RawRequest(ctx, method, uri, req,
+	resp, err := r.client.StreamRequest(ctx, method, uri, req,
 		withHTTPQuery("conversation_id", req.ConversationID),
 		withHTTPQuery("chat_id", req.ChatID),
 	)

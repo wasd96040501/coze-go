@@ -9,6 +9,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -152,6 +153,18 @@ func (c *core) RawRequest(ctx context.Context, method, path string, body any, op
 	return resp, err
 }
 
+func (c *core) StreamRequest(ctx context.Context, method, path string, body any, opts ...RequestOption) (*http.Response, error) {
+	resp, err := c.RawRequest(ctx, method, path, body, opts...)
+	if err != nil {
+		return nil, err
+	}
+	contentType := resp.Header.Get("Content-Type")
+	if contentType != "" && strings.Contains(contentType, "application/json") {
+		return nil, packInstance(ctx, &baseResponse{}, resp)
+	}
+	return resp, nil
+}
+
 func packInstance(ctx context.Context, instance any, resp *http.Response) error {
 	err := checkHttpResp(ctx, resp)
 	if err != nil {
@@ -196,7 +209,7 @@ func checkHttpResp(ctx context.Context, resp *http.Response) error {
 			logger.Errorf(ctx, fmt.Sprintf("unmarshal response body: %s", string(bodyBytes)))
 			return errors.New(string(bodyBytes) + " log_id: " + logID)
 		}
-		return NewCozeAuthExceptionWithoutParent(&errorInfo, resp.StatusCode, logID)
+		return NewAuthError(&errorInfo, resp.StatusCode, logID)
 	}
 	return nil
 }
