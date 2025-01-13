@@ -285,7 +285,7 @@ func (c *OAuthClient) getAccessToken(ctx context.Context, params getAccessTokenP
 	if params.Secret != "" {
 		opt = append(opt, withHTTPHeader(authorizeHeader, fmt.Sprintf("Bearer %s", params.Secret)))
 	}
-	if err := c.core.Request(ctx, http.MethodPost, getTokenPath, req, result, opt...); err != nil {
+	if err := c.core.Request(genAuthContext(ctx), http.MethodPost, getTokenPath, req, result, opt...); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -462,7 +462,7 @@ func (c *DeviceOAuthClient) doGetDeviceCode(ctx context.Context, workspaceID *st
 		ClientID: c.clientID,
 	}
 	result := &GetDeviceAuthResp{}
-	err := c.core.Request(ctx, http.MethodPost, urlPath, req, result)
+	err := c.core.Request(genAuthContext(ctx), http.MethodPost, urlPath, req, result)
 	if err != nil {
 		return nil, err
 	}
@@ -516,7 +516,7 @@ func (c *DeviceOAuthClient) GetAccessToken(ctx context.Context, dReq *GetDeviceO
 
 func (c *DeviceOAuthClient) doGetAccessToken(ctx context.Context, req *getAccessTokenReq) (*OAuthToken, error) {
 	resp := &getOAuthTokenResp{}
-	if err := c.core.Request(ctx, http.MethodPost, getTokenPath, req, resp); err != nil {
+	if err := c.core.Request(genAuthContext(ctx), http.MethodPost, getTokenPath, req, resp); err != nil {
 		return nil, err
 	}
 	res := &OAuthToken{

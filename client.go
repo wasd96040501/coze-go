@@ -95,6 +95,9 @@ type authTransport struct {
 }
 
 func (h *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	if isAuthContext(req.Context()) {
+		return h.next.RoundTrip(req)
+	}
 	accessToken, err := h.auth.Token(req.Context())
 	if err != nil {
 		logger.Errorf(req.Context(), "Failed to get access token: %v", err)
