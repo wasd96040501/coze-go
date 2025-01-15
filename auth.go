@@ -599,9 +599,10 @@ func (c *JWTOAuthClient) GetAccessToken(ctx context.Context, opts *GetJWTAccessT
 		Type:   GrantTypeJWTCode,
 		Secret: jwtCode,
 		Request: &getAccessTokenReq{
-			ClientID:  c.clientID,
-			GrantType: string(GrantTypeJWTCode),
-			Scope:     opts.Scope,
+			ClientID:        c.clientID,
+			GrantType:       string(GrantTypeJWTCode),
+			DurationSeconds: ttl,
+			Scope:           opts.Scope,
 		},
 	}
 	return c.getAccessToken(ctx, req)
