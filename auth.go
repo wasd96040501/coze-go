@@ -147,6 +147,7 @@ type OAuthClient struct {
 	clientID     string
 	clientSecret string
 	baseURL      string
+	wwwURL       string
 	hostName     string
 }
 
@@ -158,6 +159,7 @@ const (
 
 type oauthOption struct {
 	baseURL    string
+	wwwURL     string
 	httpClient HTTPClient
 }
 
@@ -167,6 +169,13 @@ type OAuthClientOption func(*oauthOption)
 func WithAuthBaseURL(baseURL string) OAuthClientOption {
 	return func(opt *oauthOption) {
 		opt.baseURL = baseURL
+	}
+}
+
+// WithAuthWWWURL adds base URL
+func WithAuthWWWURL(wwwURL string) OAuthClientOption {
+	return func(opt *oauthOption) {
+		opt.wwwURL = wwwURL
 	}
 }
 
@@ -203,10 +212,15 @@ func newOAuthClient(clientID, clientSecret string, opts ...OAuthClientOption) (*
 		httpClient = http.DefaultClient
 	}
 
+	if initSettings.wwwURL == "" {
+		initSettings.wwwURL = strings.Replace(initSettings.baseURL, "api.", "www.", 1)
+	}
+
 	return &OAuthClient{
 		clientID:     clientID,
 		clientSecret: clientSecret,
 		baseURL:      initSettings.baseURL,
+		wwwURL:       initSettings.wwwURL,
 		hostName:     hostName,
 		core:         newCore(httpClient, initSettings.baseURL),
 	}, nil
@@ -230,7 +244,7 @@ func (c *OAuthClient) getOAuthURL(redirectURI, state string, opts ...urlOption) 
 		opt(&params)
 	}
 
-	uri := c.baseURL + "/api/permission/oauth2/authorize"
+	uri := c.wwwURL + "/api/permission/oauth2/authorize"
 	return uri + "?" + params.Encode()
 }
 
@@ -252,7 +266,7 @@ func (c *OAuthClient) getWorkspaceOAuthURL(redirectURI, state, workspaceID strin
 		opt(&params)
 	}
 
-	uri := fmt.Sprintf("%s/api/permission/oauth2/workspace_id/%s/authorize", c.baseURL, workspaceID)
+	uri := fmt.Sprintf("%s/api/permission/oauth2/workspace_id/%s/authorize", c.wwwURL, workspaceID)
 	return uri + "?" + params.Encode()
 }
 

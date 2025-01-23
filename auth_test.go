@@ -58,7 +58,7 @@ func TestPKCEOAuthClient(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.NotEmpty(t, resp.CodeVerifier)
-		assert.Contains(t, resp.AuthorizationURL, "https://api.coze.com/api/permission/oauth2/authorize")
+		assert.Contains(t, resp.AuthorizationURL, "https://www.coze.com/api/permission/oauth2/authorize")
 		assert.Contains(t, resp.AuthorizationURL, "client_id=test_client_id")
 		assert.Contains(t, resp.AuthorizationURL, "redirect_uri=https%3A%2F%2Fexample.com%2Fcallback")
 		assert.Contains(t, resp.AuthorizationURL, "state=test_state")
@@ -78,7 +78,7 @@ func TestPKCEOAuthClient(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.NotEmpty(t, resp.CodeVerifier)
-		assert.Contains(t, resp.AuthorizationURL, "https://api.coze.com/api/permission/oauth2/workspace_id/workspace_id/authorize")
+		assert.Contains(t, resp.AuthorizationURL, "https://www.coze.com/api/permission/oauth2/workspace_id/workspace_id/authorize")
 		assert.Contains(t, resp.AuthorizationURL, "client_id=test_client_id")
 		assert.Contains(t, resp.AuthorizationURL, "redirect_uri=https%3A%2F%2Fexample.com%2Fcallback")
 		assert.Contains(t, resp.AuthorizationURL, "state=test_state")
@@ -117,7 +117,7 @@ func TestDeviceOAuthClient(t *testing.T) {
 				expectedResp := &GetDeviceAuthResp{
 					DeviceCode:      "test_device_code",
 					UserCode:        "test_user_code",
-					VerificationURI: "https://api.coze.com/verify",
+					VerificationURI: "https://www.coze.com/verify",
 					ExpiresIn:       1800,
 					Interval:        5,
 				}
@@ -134,8 +134,8 @@ func TestDeviceOAuthClient(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "test_device_code", resp.DeviceCode)
 		assert.Equal(t, "test_user_code", resp.UserCode)
-		assert.Equal(t, "https://api.coze.com/verify", resp.VerificationURI)
-		assert.Equal(t, "https://api.coze.com/verify?user_code=test_user_code", resp.VerificationURL)
+		assert.Equal(t, "https://www.coze.com/verify", resp.VerificationURI)
+		assert.Equal(t, "https://www.coze.com/verify?user_code=test_user_code", resp.VerificationURL)
 	})
 
 	t.Run("GetAccessToken with polling", func(t *testing.T) {
@@ -248,7 +248,7 @@ func TestWebOAuthClient(t *testing.T) {
 			RedirectURI: "https://example.com/callback",
 			State:       "test_state",
 		})
-		assert.Contains(t, url, "https://api.coze.com/api/permission/oauth2/authorize")
+		assert.Contains(t, url, "https://www.coze.com/api/permission/oauth2/authorize")
 		assert.Contains(t, url, "client_id=test_client_id")
 		assert.Contains(t, url, "redirect_uri=https%3A%2F%2Fexample.com%2Fcallback")
 		assert.Contains(t, url, "state=test_state")
