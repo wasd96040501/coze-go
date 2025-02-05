@@ -22,13 +22,12 @@ func TestUsersClient_Me(t *testing.T) {
 		},
 	}
 
-	client, err := NewUsersClient(
-		WithUsersBaseURL(ComBaseURL),
-		WithUsersHttpClient(&http.Client{Transport: mockTransport}),
+	client := NewCozeAPI(NewTokenAuth("test_token"),
+		WithBaseURL(ComBaseURL),
+		WithHttpClient(&http.Client{Transport: mockTransport}),
 	)
-	require.NoError(t, err)
 
-	user, err := client.Me(context.Background())
+	user, err := client.Users.Me(context.Background())
 	require.NoError(t, err)
 	assert.Equal(t, "test_user_id", user.UserID)
 	assert.Equal(t, "test_user", user.UserName)
