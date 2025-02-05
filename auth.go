@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -738,4 +739,65 @@ func parsePrivateKey(privateKeyPEM string) (*rsa.PrivateKey, error) {
 	}
 
 	return rsaKey, nil
+}
+
+// OAuthConfig represents the configuration for OAuth clients
+type OAuthConfig struct {
+	ClientID     string `json:"client_id"`
+	ClientType   string `json:"client_type"`
+	ClientSecret string `json:"client_secret,omitempty"`
+	PrivateKey   string `json:"private_key,omitempty"`
+	PublicKeyID  string `json:"public_key_id,omitempty"`
+	CozeAPIBase  string `json:"coze_api_base,omitempty"`
+	CozeWWWBase  string `json:"coze_www_base,omitempty"`
+}
+
+// LoadOAuthAppFromConfig creates an OAuth client based on the provided JSON configuration bytes
+func LoadOAuthAppFromConfig(configBytes []byte) (interface{}, error) {
+	var config OAuthConfig
+	if err := json.Unmarshal(configBytes, &config); err != nil {
+		return nil, fmt.Errorf("failed to parse config JSON: %w", err)
+	}
+
+	if config.ClientID == "" {
+		return nil, errors.New("client_id is required")
+	}
+
+	if config.ClientType == "" {
+		return nil, errors.New("client_type is required")
+	}
+
+	var opts []OAuthClientOption
+	if config.CozeAPIBase != "" {
+		opts = append(opts, WithAuthBaseURL(config.CozeAPIBase))
+	}
+	if config.CozeWWWBase != "" {
+		opts = append(opts, WithAuthWWWURL(config.CozeWWWBase))
+	}
+
+	switch config.ClientType {
+	case "pkce":
+		return NewPKCEOAuthClient(config.ClientID, opts...)
+	case "jwt":
+		if config.PrivateKey == "" {
+			return nil, errors.New("private_key is required for JWT client")
+		}
+		if config.PublicKeyID == "" {
+			return nil, errors.New("public_key_id is required for JWT client")
+		}
+		return NewJWTOAuthClient(NewJWTOAuthClientParam{
+			ClientID:      config.ClientID,
+			PublicKey:     config.PublicKeyID,
+			PrivateKeyPEM: config.PrivateKey,
+		}, opts...)
+	case "device":
+		return NewDeviceOAuthClient(config.ClientID, opts...)
+	case "web":
+		if config.ClientSecret == "" {
+			return nil, errors.New("client_secret is required for Web client")
+		}
+		return NewWebOAuthClient(config.ClientID, config.ClientSecret, opts...)
+	default:
+		return nil, fmt.Errorf("invalid OAuth client_type: %s", config.ClientType)
+	}
 }
