@@ -14,6 +14,11 @@ type User struct {
 	AvatarURL string `json:"avatar_url"`
 }
 
+type meResp struct {
+	baseResponse
+	User *User `json:"data"`
+}
+
 type users struct {
 	client *core
 }
@@ -28,9 +33,11 @@ func newUsers(core *core) *users {
 func (r *users) Me(ctx context.Context) (*User, error) {
 	method := http.MethodGet
 	uri := "/v1/users/me"
-	result := &User{}
-	if err := r.client.Request(ctx, method, uri, nil, result); err != nil {
+	resp := &meResp{}
+	if err := r.client.Request(ctx, method, uri, nil, resp); err != nil {
 		return nil, err
 	}
-	return result, nil
+
+	resp.User.setHTTPResponse(resp.HTTPResponse)
+	return resp.User, nil
 }
