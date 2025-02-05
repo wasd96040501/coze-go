@@ -169,6 +169,9 @@ type OAuthClientOption func(*oauthOption)
 // WithAuthBaseURL adds base URL
 func WithAuthBaseURL(baseURL string) OAuthClientOption {
 	return func(opt *oauthOption) {
+		if !strings.HasPrefix(baseURL, "http://") && !strings.HasPrefix(baseURL, "https://") {
+			baseURL = "https://" + baseURL
+		}
 		opt.baseURL = baseURL
 	}
 }
@@ -176,6 +179,9 @@ func WithAuthBaseURL(baseURL string) OAuthClientOption {
 // WithAuthWWWURL adds base URL
 func WithAuthWWWURL(wwwURL string) OAuthClientOption {
 	return func(opt *oauthOption) {
+		if !strings.HasPrefix(wwwURL, "http://") && !strings.HasPrefix(wwwURL, "https://") {
+			wwwURL = "https://" + wwwURL
+		}
 		opt.wwwURL = wwwURL
 	}
 }
