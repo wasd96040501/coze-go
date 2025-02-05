@@ -12,12 +12,13 @@ import (
 func TestUsersClient_Me(t *testing.T) {
 	mockTransport := &mockTransport{
 		roundTripFunc: func(req *http.Request) (*http.Response, error) {
-			expectedUser := &meResp{User: &User{
-				UserID:    "test_user_id",
-				UserName:  "test_user",
-				NickName:  "Test User",
-				AvatarURL: "https://example.com/avatar.jpg",
-			},
+			expectedUser := &meResp{
+				User: &User{
+					UserID:    "test_user_id",
+					UserName:  "test_user",
+					NickName:  "Test User",
+					AvatarURL: "https://example.com/avatar.jpg",
+				},
 			}
 			return mockResponse(http.StatusOK, expectedUser)
 		},
