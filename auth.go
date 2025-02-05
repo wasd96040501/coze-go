@@ -752,7 +752,7 @@ type OAuthConfig struct {
 }
 
 // LoadOAuthAppFromConfig creates an OAuth client based on the provided JSON configuration bytes
-func LoadOAuthAppFromConfig(config OAuthConfig) (interface{}, error) {
+func LoadOAuthAppFromConfig(config *OAuthConfig) (interface{}, error) {
 	if config.ClientID == "" {
 		return nil, errors.New("client_id is required")
 	}
