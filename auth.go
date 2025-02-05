@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -169,9 +168,6 @@ type OAuthClientOption func(*oauthOption)
 // WithAuthBaseURL adds base URL
 func WithAuthBaseURL(baseURL string) OAuthClientOption {
 	return func(opt *oauthOption) {
-		if !strings.HasPrefix(baseURL, "http://") && !strings.HasPrefix(baseURL, "https://") {
-			baseURL = "https://" + baseURL
-		}
 		opt.baseURL = baseURL
 	}
 }
@@ -179,9 +175,6 @@ func WithAuthBaseURL(baseURL string) OAuthClientOption {
 // WithAuthWWWURL adds base URL
 func WithAuthWWWURL(wwwURL string) OAuthClientOption {
 	return func(opt *oauthOption) {
-		if !strings.HasPrefix(wwwURL, "http://") && !strings.HasPrefix(wwwURL, "https://") {
-			wwwURL = "https://" + wwwURL
-		}
 		opt.wwwURL = wwwURL
 	}
 }
@@ -759,12 +752,7 @@ type OAuthConfig struct {
 }
 
 // LoadOAuthAppFromConfig creates an OAuth client based on the provided JSON configuration bytes
-func LoadOAuthAppFromConfig(configBytes []byte) (interface{}, error) {
-	var config OAuthConfig
-	if err := json.Unmarshal(configBytes, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse config JSON: %w", err)
-	}
-
+func LoadOAuthAppFromConfig(config OAuthConfig) (interface{}, error) {
 	if config.ClientID == "" {
 		return nil, errors.New("client_id is required")
 	}
