@@ -123,6 +123,11 @@ type WorkflowEvent struct {
 	Message   *WorkflowEventMessage   `json:"message,omitempty"`
 	Interrupt *WorkflowEventInterrupt `json:"interrupt,omitempty"`
 	Error     *WorkflowEventError     `json:"error,omitempty"`
+	DebugURL  *WorkflowEventDebugURL  `json:"debug_url,omitempty"`
+}
+
+type WorkflowEventDebugURL struct {
+	URL string `json:"debug_url"`
 }
 
 func parseWorkflowEventMessage(id int, data string) (*WorkflowEvent, error) {
@@ -164,11 +169,16 @@ func parseWorkflowEventError(id int, data string) (*WorkflowEvent, error) {
 	}, nil
 }
 
-func parseWorkflowEventDone(id int) *WorkflowEvent {
-	return &WorkflowEvent{
-		ID:    id,
-		Event: WorkflowEventTypeDone,
+func parseWorkflowEventDone(id int, data string) (*WorkflowEvent, error) {
+	var debugURL WorkflowEventDebugURL
+	if err := json.Unmarshal([]byte(data), &debugURL); err != nil {
+		return nil, err
 	}
+	return &WorkflowEvent{
+		ID:       id,
+		Event:    WorkflowEventTypeDone,
+		DebugURL: &debugURL,
+	}, nil
 }
 
 func doParseWorkflowEvent(eventLine map[string]string) (*WorkflowEvent, error) {
@@ -184,7 +194,7 @@ func doParseWorkflowEvent(eventLine map[string]string) (*WorkflowEvent, error) {
 	case WorkflowEventTypeError:
 		return parseWorkflowEventError(id, data)
 	case WorkflowEventTypeDone:
-		return parseWorkflowEventDone(id), nil
+		return parseWorkflowEventDone(id, data)
 	default:
 		return parseWorkflowEventMessage(id, data)
 	}

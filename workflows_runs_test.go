@@ -72,7 +72,7 @@ data:{"content":"World","node_title":"End","node_seq_id":"1","node_is_finish":tr
 
 id:2
 event:Done
-data:
+data:{"debug_url":"https://www.coze.cn/work_flow?***"}
 `)
 			},
 		}
@@ -115,6 +115,7 @@ data:
 		require.NoError(t, err)
 		assert.Equal(t, 2, event.ID)
 		assert.Equal(t, WorkflowEventTypeDone, event.Event)
+		assert.Equal(t, "https://www.coze.cn/work_flow?***", event.DebugURL.URL)
 		assert.True(t, event.IsDone())
 	})
 
@@ -133,7 +134,7 @@ data:{"content":"Resumed","node_title":"Resume","node_seq_id":"0","node_is_finis
 
 id:1
 event:Done
-data:
+data:{"debug_url":"https://www.coze.cn/work_flow?***"}
 `)
 			},
 		}
@@ -166,6 +167,7 @@ data:
 		require.NoError(t, err)
 		assert.Equal(t, 1, event.ID)
 		assert.Equal(t, WorkflowEventTypeDone, event.Event)
+		assert.Equal(t, "https://www.coze.cn/work_flow?***", event.DebugURL.URL)
 		assert.True(t, event.IsDone())
 	})
 
