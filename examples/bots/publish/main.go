@@ -51,6 +51,9 @@ func main() {
 			SuggestedQuestions: []string{"question 1", "question 2"},
 		},
 		IconFileID: avatarInfo.FileInfo.ID,
+		ModelInfoConfig: &coze.BotModelInfoConfig{
+			ModelID: "1738675210",
+		},
 	})
 	if err != nil {
 		fmt.Println("Error creating bot:", err)
@@ -99,6 +102,9 @@ func main() {
 	updateResp, err := cozeCli.Bots.Update(ctx, &coze.UpdateBotsReq{
 		BotID:      botID,
 		IconFileID: newAvatarInfo.FileInfo.ID,
+		ModelInfoConfig: &coze.BotModelInfoConfig{
+			ModelID: "1738675210",
+		},
 	})
 	if err != nil {
 		fmt.Println("Error updating bot:", err)
