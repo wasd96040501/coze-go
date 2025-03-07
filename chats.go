@@ -76,11 +76,11 @@ func (r *chat) CreateAndPoll(ctx context.Context, req *CreateChatsReq, timeout *
 	}, nil
 }
 
-func (r *chat) Stream(ctx context.Context, req *CreateChatsReq) (Stream[ChatEvent], error) {
+func (r *chat) Stream(ctx context.Context, req *CreateChatsReq, opts ...RequestOption) (Stream[ChatEvent], error) {
 	method := http.MethodPost
 	uri := "/v3/chat"
 	req.Stream = ptr(true)
-	resp, err := r.client.StreamRequest(ctx, method, uri, req, withHTTPQuery("conversation_id", req.ConversationID))
+	resp, err := r.client.StreamRequest(ctx, method, uri, req, append(opts, withHTTPQuery("conversation_id", req.ConversationID))...)
 	if err != nil {
 		return nil, err
 	}

@@ -38,10 +38,10 @@ func (r *workflowRuns) Resume(ctx context.Context, req *ResumeRunWorkflowsReq) (
 	}, nil
 }
 
-func (r *workflowRuns) Stream(ctx context.Context, req *RunWorkflowsReq) (Stream[WorkflowEvent], error) {
+func (r *workflowRuns) Stream(ctx context.Context, req *RunWorkflowsReq, opts ...RequestOption) (Stream[WorkflowEvent], error) {
 	method := http.MethodPost
 	uri := "/v1/workflow/stream_run"
-	resp, err := r.client.StreamRequest(ctx, method, uri, req)
+	resp, err := r.client.StreamRequest(ctx, method, uri, req, opts...)
 	if err != nil {
 		return nil, err
 	}
