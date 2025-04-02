@@ -394,6 +394,9 @@ type SubmitToolOutputsChatReq struct {
 	ToolOutputs []*ToolOutput `json:"tool_outputs"`
 
 	Stream *bool `json:"stream,omitempty"`
+
+	// Optional: Specify a connector ID. Supports passing in 999 (Chat SDK) and 1024 (API). If not provided, the default is 1024 (API).
+	ConnectorID string `json:"connector_id"`
 }
 
 type WorkflowDebug struct {
