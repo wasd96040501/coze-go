@@ -353,6 +353,9 @@ type CreateChatsReq struct {
 
 	// Additional information, typically used to encapsulate some business-related fields.
 	MetaData map[string]string `json:"meta_data,omitempty"`
+
+	// Optional: Specify a connector ID. Supports passing in 999 (Chat SDK) and 1024 (API). If not provided, the default is 1024 (API).
+	ConnectorID string `json:"connector_id"`
 }
 
 // CancelChatsReq represents the request to cancel a chat
